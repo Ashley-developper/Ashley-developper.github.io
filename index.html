@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title> AOS web BETA</title>
-        <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/4/4a/Eo_circle_blue_letter-a.svg">
+        <link rel="icon" href="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png">
         <style>
             body{
                 background: linear-gradient(to right, #a2c2e8, #dfeefd);
@@ -14,20 +14,76 @@
 
             #Main-Title {
                 color:#000000 ;
-                margin:8px 8px;
+                margin-top: 80px;
                 line-height: 50px;
+                display: flex;
+                justify-content: center;
             }
 
-            .Mainpages {
-                color:#F5F5DC;
-                font-size: 30px;
-                margin:8px 8px;
-                line-height: 40px;
+            .p{
+                color:#000000 ;
+                margin-top: 80px;
+                line-height: 50px;
+                display: flex;
+                justify-content: center;
             }
 
+            .navbar{
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 0;
+                background-color: #ffffff;
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .navbar2{
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #000000;
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .navbar a {
+                color:rgb(0, 0, 0);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            .navbar2 a{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            .navbar2 p{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            nav a:hover {
+                background-color: lightblue;
+                color: #000000;
+                transition: 0.5s;
+                border-radius: 5px;
+
+            }
             .Title2{
-                color: #177245;
+                color: #087074;
                 margin:8px 8px;
+                display: flex;
+                justify-content: center;
             }
 
             #LUT {
@@ -47,21 +103,34 @@
     </head>
 
     <body>
+        <nav class="navbar">
+            <a href="index.html"><img id="Image1" src="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png" width="50" height="50"></a>
+            <a id="Button1" href="AboutUs.html">About us</a>
+            <a id="Button2" href="News.html">News in Ashley </a>
+            <a id="Button3" href="MoreInfo.html">More information</a>
+            <a id="Button4" href="Contact.html">To reach us</a>
+            <a id="Button5" href="UpdateLog.html">Update log</a>
+            <a id="Button6" href="UpdateLog.html">Final Exam</a>
+        </nav>
 
-        <h1 id="Main-Title" class="maintitle">Welcome to AOS <em>web</em></h1>
+        <div>
+            <h1 id="Main-Title" class="maintitle">Welcome to AOS</h1>
+            <h2 class="Title2">CLick each section in the navbar to see the content.</h2>
+            <h2 class="p">Discover the new updates of AOS</h2>
+            <h2 class="p">To make sure you will have a nice experience</h2>
+            <h2 class="p">Don't forget that we also have the french version...</h2>
+            <h2 class="p">Powered by Github pages and by Ashley</h2>
+        </div>
+    
+    <nav class="navbar2">
+        <a href="index2.html">français</a>
+        <p>Ashley 2025</p>
 
-        <h2 class="Title2">Main pages</h2>
-        <ul>
-            <li><a id="Button1" class='Mainpages' href="AboutUs.html">About us</a></li>
-            <li><a id="Button2" class='Mainpages' href="News.html">News in Ashley </a></li>
-            <li><a id="Button3" class="Mainpages" href="MoreInfo.html">More information</a></li>
-            <li><a id="Buttons4" class="Mainpages" href="Contact.html">To reach us</a></li>
-            <li><a id="Buttons5" class="Mainpages" href="UpdateLog.html">Update log</a></li>
-        </ul>
+    </nav>
 
         <br>
         <br>
-        <h5 id="LUT"><a href="index2.html">Français&nbsp;</a>Last update time: 2025/5/18 11h | <a href="Copyright.html">Copyright</a> © 2025 Ashley All rights reserved. ZHANYI ZHOU</h5>
+        <!-- <h5 id="LUT"><a href="index2.html">Français&nbsp;</a>Last update time: 2025/5/17 21h | <a href="Copyright.html">Copyright</a> © 2025 Ashley All rights reserved. ZHANYI ZHOU</h5> -->
     </body>
 </html>
 
