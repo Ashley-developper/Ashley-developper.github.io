@@ -186,16 +186,16 @@
         </style>
     </head>
     <script>
-        localStorage.clear();
         function UserID() {
             let user = localStorage.getItem('userID')
         if (!user) {
             user = Math.floor(Math.random() * 1000)
             localStorage.setItem('userID', user)
+            console.log('Created a new ID for this new user',user())
         }
         return user
         }
-        console.log(UserID())
+        console.log('User',UserID(), 'entered into the website')
     </script>
     <body>
         <nav class="navbar">
