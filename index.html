@@ -8,7 +8,6 @@
         <meta name="author" content="Zhanyi Zhou">
         <title> Ashley</title>
         <link rel="icon" href="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png">
-    </head>
         <style>
             body{
                 background: linear-gradient(to right, #a2c2e8, #dfeefd);
@@ -17,14 +16,28 @@
                 font-size: 25px
             }
 
+            @media screen and (max-width: 768px){
+            body{
+              font-size: 15px
+            }
+          }
+
+          @media screen and (max-width: 768px){
+            .navbar{
+              font-size: 10px
+            }
+          }
+
             .Main{
                 background-image:url('https://img.freepik.com/premium-vector/blue-white-abstract-background-design-well-use-as-wallpaper-website-template-background_756251-43.jpg');
                 background-repeat: no-repeat;
                 background-size: 5000px 12000px;
+                padding: 40px 10px;
                 margin-left: 18px;
                 margin-right: 18px;
                 margin-top: 5px;
                 border-radius: 20px;
+                text-align: center;
             }
 
             .Main h1 {
@@ -55,6 +68,16 @@
                 align-items: center;
                 display: flex;
                 justify-content: space-between;
+            }
+
+            .hamburger{
+              display:none;
+            }
+
+            .hamburger-items{
+              display:flex;
+              justify-content: space-between;
+              gap: 20px;
             }
 
             .Warning{
@@ -160,10 +183,12 @@
     <body>
         <nav class="navbar">
             <a href="/"><img id="Image1" src="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png" width="50" height="50"></a>
-            <a id="Button1" href="/AboutUs">About us</a>
-            <a id="Button3" href="/MoreInfo">More information</a>
-            <a id="Button4" href="/Contact">To reach us</a>
-            <a id="Button5" href="/UpdateLog">Update log</a>
+            <div class='hamburger-items'>
+              <a id="Button1" href="/AboutUs">About us</a>
+              <a id="Button3" href="/MoreInfo">More information</a>
+              <a id="Button4" href="/Contact">To reach us</a>
+              <a id="Button5" href="/UpdateLog">Update log</a>
+              </div>
         </nav>
 
         <div class="Warning">
@@ -175,7 +200,8 @@
             <h3 class="Title2">Ashley is a studio which study everything!!</h3>
             <h3 class="p">We study in secondary, we play soccer, we can even develop websites!!</h3>
             <h3 class="p">This website is our personal website with PERMANENT URL</h3>
-            <h3 class="p">We have also services to build the personal website. <a href="Plans.html">Click here to see plans</a></h3>
+            <h3 class="p">We have also services to build the personal website.</h3>
+            <a href="Plans.html">Click here to see plans</a>
             <h3 class="p">See more in <a href="AboutUs.html">"About us"</a></h3>
         </div>
 
