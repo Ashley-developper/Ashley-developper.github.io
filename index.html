@@ -188,11 +188,13 @@
     <script>
         function UserID() {
             let user = localStorage.getItem('userID')
-        if (!userID) {
-            let user = Math.floor(Math.random() * 1000)
-            localStorage.setItem('UserID', user)
-            return user
-        console.log('User',user,'Entered into the website')
+        if (!user) {
+            user = Math.floor(Math.random() * 1000)
+            localStorage.setItem('userID', user)
+            console.log('User',user,'Entered into the website')
+        }
+        return user
+        }
     </script>
     <body>
         <nav class="navbar">
