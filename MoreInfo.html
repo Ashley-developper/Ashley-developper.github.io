@@ -50,7 +50,19 @@
         }
         </style>
     </head>
-
+    <script>
+        function UserID() {
+            let user = localStorage.getItem('userID')
+        if (!user) {
+            console.log('A visitor is visiting section "More information" ')
+            window.onload = function(){
+                alert('You are a visitor, return to the main page to get your User ID')
+            }
+        }
+        return user
+        }
+        console.log('User',UserID(), 'entered into the page "More information" ')
+    </script>
     <body>
         <nav class="navbar">
             <a href="index.html"><img id="Image1" src="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png" width="50" height="50"></a>
