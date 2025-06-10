@@ -50,7 +50,19 @@
             }
         </style>
     </head>
-
+    <script>
+        function UserID() {
+            let user = localStorage.getItem('userID')
+        if (!user) {
+            console.log('')
+            window.onload = function(){
+                Warning('You are a visitor, return to the main page to get your User ID')
+            }
+        }
+        return user
+        }
+        console.log('User',UserID(), 'entered into the page "About Us" ')
+    </script>
     <body>
 
         <nav class="navbar">
