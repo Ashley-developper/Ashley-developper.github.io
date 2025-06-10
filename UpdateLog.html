@@ -19,7 +19,19 @@
             }
         </style>
     </head>
-
+    <script>
+        function UserID() {
+            let user = localStorage.getItem('userID')
+        if (!user) {
+            console.log('A visitor is visiting section "Update Log" ')
+            window.onload = function(){
+                alert('You are a visitor, return to the main page to get your User ID')
+            }
+        }
+        return user
+        }
+        console.log('User',UserID(), 'entered into the page "Update Log" ')
+    </script>
     <body>
         <h1 id="Main-Title" class="Maintitle">Update Log <em>of Ashley</em></h1>
 
