@@ -124,9 +124,6 @@
             @media screen and (max-width: 768px){
             .navbar a:hover{
               color: blue;
-                font-size: 15px;
-                transition: 0.5s;
-                border-radius: 5px;
             }
           }
             
@@ -138,7 +135,7 @@
 
             .navbar a:hover {
                 color: blue;
-                font-size: 30px;
+                font-size: 26px;
                 transition: 0.5s;
                 border-radius: 5px;
 
@@ -160,6 +157,16 @@
 
         </style>
     </head>
+    <script>
+        function Device() {
+            if (window.innerWidth < 768) {
+                window.onload = function(){
+                    alert('You are a mobile user. Some contents may not display.')
+                }
+            }
+        }
+        Device()
+    </script>
     <!--
     <script>
         function UserID() {
