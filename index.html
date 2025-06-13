@@ -10,9 +10,7 @@
         <link rel="icon" href="https://i.ibb.co/DPCmRdtg/Ashley-light.png">
         <style>
             body{
-                background: linear-gradient(to right, #a2c2e8, #dfeefd);
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-                margin:0;
+                font-family: Garamond, serif;
                 font-size: 25px
             }
 
@@ -37,28 +35,24 @@
 
 
             .Main{
-                background-image:url('https://img.freepik.com/premium-vector/blue-white-abstract-background-design-well-use-as-wallpaper-website-template-background_756251-43.jpg');
-                background-repeat: no-repeat;
-                background-size: 5000px 12000px;
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
                 padding: 40px 10px;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 5px;
-                border-radius: 20px;
                 text-align: center;
+                margin: 5px 10px;
+                border-radius: 20px;
             }
 
             .Main h1 {
+                color: white;
                 margin-top: 5px;
                 margin-left: 8px;
-                color:rgb(98, 0, 255);
                 display: flex;
                 justify-content: center;
 
             }
 
             .p{
-                color:#000000 ;
                 margin-top: 80px;
                 line-height: 50px;
                 display: flex;
@@ -70,7 +64,7 @@
                 left: 0;
                 right: 0;
                 top: 0;
-                background-color: white;
+                background-color: rgba(0, 0, 0, 0.5);
                 height:30px;
                 padding: 10px 40px;
                 align-items: center;
@@ -100,31 +94,6 @@
                 align-items: center;
                 margin-left: 8px
             }
-
-            .Main2{
-                background-image:url('https://www.collinsdictionary.com/images/full/paper_111691001_1000.jpg?version=6.0.83');
-                height: 1000px;
-                background-repeat: no-repeat;
-                background-size: cover;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 5px;
-                border-radius: 20px;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .Main2 h1 {
-                margin-top: 8px;
-                margin-left: 10px;
-                color:black;
-            }
-
-            #Main2h2 {
-                margin-top: 8px;
-                margin-left: 10px;
-                color: #009999;
-            }
             
             .navbar2{
                 position: fixed;
@@ -140,9 +109,10 @@
             }
 
             .navbar a {
-                color:rgb(0, 0, 0);
+                color: white;
                 text-decoration: none;
                 align-items: center;
+                gap: 10px;
             }
 
             .navbar2 a{
@@ -158,35 +128,29 @@
             }
 
             .navbar a:hover {
-                background-color: #fafafa;
-                color: #000000;
+                color: blue;
+                font-size: 30px;
                 transition: 0.5s;
-                opacity: 0.5;
                 border-radius: 5px;
 
             }
+
+            .video-background {
+                position: fixed;
+                top: 0;
+                left:0;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: -1;
             
             .Title2{
-                color: #087074;
                 margin:8px 8px;
                 display: flex;
                 justify-content: center;
             }
 
-            #LUT {
-                text-decoration: overline;
-                margin:8px 8px;
-                line-height: 10px;
-                font-size:13px
-            }
-            #LUT2 {
-                margin:8px 8px;
-                line-height: 10px;
-                font-size: 13px;
-            }
         </style>
     </head>
-    <!--
     <script>
         function UserID() {
             let user = localStorage.getItem('userID')
@@ -202,10 +166,12 @@
         }
         console.log('User',UserID(), 'entered into the website')
     </script>
-    -->
     <body>
+        <video autoplay loop muted playsinline class="video-background">
+            <source src="67358-521707474_tiny.mp4" type="video/mp4">
+        </video>
         <nav class="navbar">
-            <a href="/"><img id="Image1" src="https://i.ibb.co/DPCmRdtg/Ashley-light.png" height="50" width="50"></a>
+            <a href="/"><img id="Image1" src="https://i.ibb.co/KjZ0wgkV/Ashley-dark.png" width="50" height="50"></a>
             <div class='hamburger-items'>
               <a id="Button1" href="/AboutUs">About us</a>
               <a id="Button3" href="/MoreInfo">More information</a>
@@ -215,30 +181,24 @@
         </nav>
 
         <div class="Warning">
-            <p>⛔️: UserID is now paused because of the risk of the visiters's privacy. It will open again after some updates.</p>
+            <p>⛔️: This is the staging page for tests and debugs.</p>
         </div>
         
         <div class="Main">
-            <h1>Introduce the official website of Ashley</h1>
-            <h3 class="Title2">Ashley is a studio which study everything!!</h3>
-            <h3 class="p">We study in secondary, we play soccer, we can even develop websites!!</h3>
-            <h3 class="p">This website is our personal website with PERMANENT URL</h3>
-            <h3 class="p">We have also services to build the personal website.</h3>
-            <a href="Plans.html">Click here to see plans</a>
+            <h1><strong>Welcome to the official website of Ashley!</strong></h1>
+            <h3 class="Title2">I am Ashley, a curious individual who loves to explore everything!</h3>
+            <h3 class="p">I am a secondary school student and am interested in the developement of websites!</h3>
+            <h3 class="p">This website is my personal website with PERMANENT URL</h3>
+            <h3 class="p">I have also services to build the personal website.</h3>
+            <a href="Plans.html">Click here to contact me</a>
             <h3 class="p">See more in <a href="AboutUs.html">"About us"</a></h3>
+            <h3>And, Remember that I am a boy OK...</h3>
         </div>
-
-        <div class="Main2">
-            <h1><em>Good Luck</em></h1>
-            <h1 id="Main2h2">Preparing for final exams</h1>
-        </div>
-    
+        
     <nav class="navbar2">
         <a href="index2.html">中文</a>
         <p>Ashley 2025 Zhanyi Zhou</p>
-
+    <!--https://i.ibb.co/KjZ0wgkV/Ashley-light.png-->
     </nav>
     </body>
 </html>
-
-<!--This code will not be supportted from 23 June to 25 August 2025-->
