@@ -1,65 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <title> Update Log</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Ashley studio, interested in everthing in the world. We also help people building personal website, like this.">
+        <meta name="keywords" content="Ashley, Interest, Personal website, Ashley Studio">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Zhanyi Zhou">
+        <title> Ashley</title>
+        <link rel="icon" href="https://i.ibb.co/DPCmRdtg/Ashley-light.png">
         <style>
             body{
-                background: linear-gradient(to right, #a2c2e8, #dfeefd);
-                left-margin:10px;
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                font-family: Garamond, serif;
+                font-size: 25px
             }
 
-            #Main-Title {
-                color: #0066ff;
+            @media screen and (max-width: 768px){
+            body{
+              font-size: 15px
+            }
+          }
+
+          @media screen and (max-width: 768px){
+            .navbar{
+              font-size: 10px
+            }
+          }
+
+        @media screen and (max-width: 768px){
+            .Main2 h1
+            .Main2 h2{
+              font-size: 30px
+            }
+          }
+
+            .Content {
+                margin-top: 58px;
             }
 
-            #LUT{
-                text-decoration: overline;
+            .date {
+                text-decoration: underline;
+                text-weignt: bold;
+                color: #00BFFF;
             }
+            
+            .Main{
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                padding: 40px 10px;
+                text-align: center;
+                margin: 5px 10px;
+                border-radius: 20px;
+            }
+
+            .Main h1 {
+                color: white;
+                margin-top: 5px;
+                margin-left: 8px;
+                display: flex;
+                justify-content: center;
+
+            }
+
+            .p{
+                margin-top: 80px;
+                line-height: 50px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .navbar{
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .hamburger{
+              display:none;
+            }
+
+            .hamburger-items{
+              display:flex;
+              justify-content: space-between;
+              gap: 20px;
+            }
+
+            .Warning{
+                background-color: #eed202;
+                margin-left: 18px;
+                margin-right: 18px;
+                margin-top: 55px;
+                border-radius: 20px;
+                display: flex;
+            }
+            .Warning p {
+                align-items: center;
+                margin-left: 8px
+            }
+            
+            .navbar2{
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #000000;
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .navbar a {
+                color: white;
+                text-decoration: none;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .navbar2 a{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            @media screen and (max-width: 768px){
+            .navbar a:hover{
+                  color: inherit;
+                }
+              }
+            
+            .navbar2 p{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            .navbar a:hover {
+                color: blue;
+                font-size: 26px;
+                transition: 0.5s;
+                border-radius: 5px;
+
+            }
+
+            .video-background {
+                position: fixed;
+                top: 0;
+                left:0;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: -1;
+            }
+
         </style>
     </head>
+    <script>
+        function Device() {
+            if (window.innerWidth < 768) {
+                window.onload = function(){
+                    alert('You are a mobile user. Some contents may not display.')
+                }
+            }
+        }
+        Device()
+    </script>
+    <!--
     <script>
         function UserID() {
             let user = localStorage.getItem('userID')
         if (!user) {
-            console.log('A visitor is visiting section "Update Log" ')
+            user = Math.floor(Math.random() * 1000)
+            localStorage.setItem('userID', user)
+            console.log('Created a new ID for this new user',user)
             window.onload = function(){
-                alert('You are a visitor, return to the main page to get your User ID')
+                alert('Welcome! Your UserID is "' + UserID() + '", Click each section for more information')
             }
         }
         return user
         }
-        console.log('User',UserID(), 'entered into the page "Update Log" ')
+        console.log('User',UserID(), 'entered into the website')
     </script>
+    -->
     <body>
-        <h1 id="Main-Title" class="Maintitle">Update Log <em>of Ashley</em></h1>
+        <video autoplay loop muted playsinline class="video-background">
+            <source src="67358-521707474_tiny.mp4" type="video/mp4">
+        </video>
+        <nav class="navbar">
+            <a href="/"><img id="Image1" src="https://i.ibb.co/KjZ0wgkV/Ashley-dark.png" width="50" height="50"></a>
+            <div class='hamburger-items'>
+              <a id="Button1" href="/AboutUs">About us</a>
+              <a id="Button3" href="/MoreInfo">More information</a>
+              <a id="Button4" href="/Contact">To reach us</a>
+              <a id="Button5" href="/UpdateLog">Update log</a>
+              </div>
+        </nav>
 
-        <ol>
-            <li><p><strong><em>2025/6/13: </em>AOS 3.0 -- HUGE UPDATES: new video background, new transparent sections, and new hover animations!</strong></p></li>
-            <li><p><strong><em>2025/6/12: </em></strong>Paused the UserID because of the privacy of users. It will come back soon.</p></li>
-            <li><p><strong><em>2025/6/12: </em></strong>Added the 'Staging' section. We have tests and debugs here... Gotcha? New updates coming!</p></li>
-            <li><p><strong><em>2025/6/8: </em></strong>Everyone has a User ID if you use the same device. Q: What does it means?</p></li>
-            <p>A: It is just a test now, we will add more functions and missions to it after vacation.</p>
-            <li><p><strong><em>2025/6/7: </em></strong>Fixed known issues. The page is now more freindly for the mobile users (HUGE update)</p></li>
-            <li><p><strong><em>2025/6/5: </em></strong>Fixed known issues. Added 404.html to detect errors.</p></li>
-            <li><p><strong><em>2025/6/4: </em></strong>Fixed known issues. Added navbar to every section</p></li>
-            <li><p><strong><em>2025/6/3: </em></strong>Added a new section to display wut r we doing... Let's just call it status section </p></li>
-            <li><p><strong><em>2025/6/2: </em></strong>NEW URL!! Ashley-developper.github.io (simplified from /AOS)</p></li>
-            <li><p><strong><em>2025/6/2: </em></strong>updated the background color of each section, fixed known issues, deleted the section 'Final Exam'</p></li>
-            <li><p><strong><em>2025/5/19: </em>AOS 2.0 -- HUGE UPDATES: Added the navbars... Added the temporary seciton 'Final Exam'... WE R ON FIRE!!</strong></p></li>
-            <li><p><strong><em>2025/5/17: </em></strong>Updated the background color of the main page</p></li>
-            <li><p><strong><em>2025/5/16: </em></strong>Added the french version of the main page</p></li>
-            <li><p><strong><em>2025/5/15: </em></strong>Fixed the grammar error in the main page, changed the size of the footer at the bottom</p></li>
-            <li><p><strong><em>2025/5/13: </em></strong>We are online in the wayback machine! Go check with <a href="https://web.archive.org/web/20250000000000*/https://ashley-developper.github.io/AOS/">Click me</a></p></li>
-            <li><p><strong><em>2025/5/13: </em></strong>Edit the main background to 'Light blue', add the new 'Update Log' section</p></li>
-            <li><p><strong><em>2025/5/13: </em>AOS 1.0 -- Started the Update log section</strong></p></li>
-        </ol>
+        <div class="Content">
+<div class="Main">
+  <p class="date">2025/6/15:</p>
+  <p class="log">Updated the section 'Update Log' to improve user experience, especially visuel UI</p>
+  <img class="log-img" src="" alt="Update Log 2025/06/15/ Screenshot>
+</div>
+<div class="Main">
+  <p class="date">2025/6/13:</p>
+  <p class="log">AOS 3.0 -- HUGE UPDATES: new video background, new transparent sections, and new hover animations!</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/12:</p>
+  <p class="log">Paused the UserID because of the privacy of users. It will come back soon.</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/12:</p>
+  <p class="log">Added the 'Staging' section. We have tests and debugs here... Gotcha? New updates coming!</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/8:</p>
+  <p class="log">Everyone has a User ID if you use the same device. Q: What does it means? A: It is just a test now, we will add more functions and missions to it after vacation.</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/7:</p>
+  <p class="log">Fixed known issues. The page is now more freindly for the mobile users (HUGE update)</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/5:</p>
+  <p class="log">Fixed known issues. Added 404.html to detect errors.</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/4:</p>
+  <p class="log">Fixed known issues. Added navbar to every section</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/3:</p>
+  <p class="log">Added a new section to display wut r we doing... Let's just call it status section</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/2:</p>
+  <p class="log">NEW URL!! Ashley-developper.github.io (simplified from /AOS)</p>
+</div>
+<div class="Main">
+  <p class="date">2025/6/2:</p>
+  <p class="log">Updated the background color of each section, fixed known issues, deleted the section 'Final Exam'</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/19:</p>
+  <p class="log">AOS 2.0 -- HUGE UPDATES: Added the navbars... Added the temporary section 'Final Exam'... WE R ON FIRE!!</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/17:</p>
+  <p class="log">Updated the background color of the main page</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/16:</p>
+  <p class="log">Added the french version of the main page</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/15:</p>
+  <p class="log">Fixed the grammar error in the main page, changed the size of the footer at the bottom</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/13:</p>
+  <p class="log">We are online in the wayback machine! Go check with <a href="https://web.archive.org/web/20250000000000*/https://ashley-developper.github.io/AOS/">Click me</a></p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/13:</p>
+  <p class="log">Edit the main background to 'Light blue', add the new 'Update Log' section</p>
+</div>
+<div class="Main">
+  <p class="date">2025/5/13:</p>
+  <p class="log">AOS 1.0 -- Started the Update log section</p>
+</div>
 
-        <br>
-        <br>
-        <h5 id="LUT">Last update time: 2025/5/19 14h | <a href="Copyright.html">Copyright</a> © 2025 Ashley All rights reserved.</h5>
+        </div>
+            
     </body>
 </html>
-
-<!--AOS BETA, secret file until 1 June-->
