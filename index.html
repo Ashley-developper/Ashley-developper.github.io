@@ -65,7 +65,7 @@
                 padding: 40px 10px;
                 text-align: center;
                 margin: 5px 10px;
-                width: 450px;
+                width: 50%;
                 border-radius: 20px;
             }
 
@@ -76,6 +76,7 @@
 
             .AOS4img {
                 border-radius: 25px;
+                width: 50%;
             }
 
             .navbar{
@@ -171,33 +172,7 @@
 
         </style>
     </head>
-    <script>
-        function Device() {
-            if (window.innerWidth < 768) {
-                window.onload = function(){
-                    alert('You are a mobile user. Some contents may not display.')
-                }
-            }
-        }
-        Device()
-    </script>
-    <!--
-    <script>
-        function UserID() {
-            let user = localStorage.getItem('userID')
-        if (!user) {
-            user = Math.floor(Math.random() * 1000)
-            localStorage.setItem('userID', user)
-            console.log('Created a new ID for this new user',user)
-            window.onload = function(){
-                alert('Welcome! Your UserID is "' + UserID() + '", Click each section for more information')
-            }
-        }
-        return user
-        }
-        console.log('User',UserID(), 'entered into the website')
-    </script>
-    -->
+
     <body>
         <video autoplay loop muted playsinline class="video-background">
             <source src="67358-521707474_tiny.mp4" type="video/mp4">
@@ -230,6 +205,7 @@
         <div class="AOS4">
             <div class="AOS4img"><img src="/AOS4_pre.png" height="250px"></div>
             <div class="AOS4txt">AOS4 <br> Coming Soon</div>
+            <div class="AOS4btn">Learn More</div>
         </div>
         
     <nav class="navbar2">
@@ -237,5 +213,15 @@
         <p>Ashley 2025 Zhanyi Zhou</p>
     <!--https://i.ibb.co/KjZ0wgkV/Ashley-light.png-->
     </nav>
+    <script>
+        function Device() {
+            if (window.innerWidth < 768) {
+                window.onload = function(){
+                    alert('You are a mobile user. Some contents may not display.')
+                }
+            }
+        }
+        Device()
+    </script>
     </body>
 </html>
