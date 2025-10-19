@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Ashley studio, interested in everthing in the world. We also help people building personal website, like this.">
+        <meta name="keywords" content="Ashley, Interest, Personal website, Ashley Studio">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Zhanyi Zhou">
+        <title> Ashley</title>
+        <link rel="icon" href="https://i.ibb.co/DPCmRdtg/Ashley-light.png">
+        <style>
+            body{
+                font-family: Garamond, serif;
+                font-size: 25px
+            }
+
+            @media screen and (max-width: 768px){
+            body{
+              font-size: 15px
+            }
+          }
+
+          @media screen and (max-width: 768px){
+            .navbar{
+              font-size: 10px
+            }
+          }
+
+        @media screen and (max-width: 768px){
+            .Main2 h1,
+            .Main2 h2{
+              font-size: 30px
+            }
+          }
+
+
+            .Main{
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                padding: 40px 10px;
+                text-align: center;
+                margin: 5px 10px;
+                border-radius: 20px;
+            }
+
+            .Main h1 {
+                color: white;
+                margin-top: 5px;
+                margin-left: 8px;
+                display: flex;
+                justify-content: center;
+
+            }
+
+            .p{
+                margin-top: 80px;
+                line-height: 50px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .AOS4{
+                background-color: rgba(0, 0, 0, 0.5);
+                color: white;
+                padding: 40px 10px;
+                text-align: center;
+                margin: 5px 10px;
+                width: 50%;
+                border-radius: 20px;
+            }
+
+            .AOS4txt{
+                font-family: 'Roboto Mono';
+                font-size: 35px;
+            }
+
+            .AOS4img {
+                border-radius: 25px;
+                width: 100%;
+                height: auto;
+            }
+
+            .AOS4btn {
+                display: none;
+            }
+
+            .navbar{
+                position: fixed;
+                left: 0;
+                right: 0;
+                top: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .hamburger{
+              display:none;
+            }
+
+            .hamburger-items{
+              display:flex;
+              justify-content: space-between;
+              gap: 20px;
+            }
+
+            .Warning{
+                background-color: #eed202;
+                margin-left: 18px;
+                margin-right: 18px;
+                margin-top: 55px;
+                border-radius: 20px;
+                display: flex;
+            }
+            .Warning p {
+                align-items: center;
+                margin-left: 8px
+            }
+            
+            .navbar2{
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #000000;
+                height:30px;
+                padding: 10px 40px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .navbar a {
+                color: white;
+                text-decoration: none;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .navbar2 a{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            @media screen and (max-width: 768px){
+            .navbar a:hover{
+                  color: inherit;
+                }
+              }
+            
+            .navbar2 p{
+                color:rgb(255, 255, 255);
+                text-decoration: none;
+                align-items: center;
+            }
+
+            .navbar a:hover {
+                color: blue;
+                font-size: 26px;
+                transition: 0.5s;
+                border-radius: 5px;
+
+            }
+
+            .video-background {
+                position: fixed;
+                top: 0;
+                left:0;
+                min-width: 100%;
+                min-height: 100%;
+                z-index: -1;      
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <video autoplay loop muted playsinline class="video-background">
+            <source src="67358-521707474_tiny.mp4" type="video/mp4">
+        </video>
+        <nav class="navbar">
+            <a href="/"><img id="Image1" src="https://i.ibb.co/KjZ0wgkV/Ashley-dark.png" width="50" height="50"></a>
+            <div class='hamburger-items'>
+              <a id="Button1" href="/AboutUs">About us</a>
+              <a id="Button3" href="/MoreInfo">More information</a>
+              <a id="Button4" href="/Contact">To reach us</a>
+              <a id="Button5" href="/UpdateLog">Update log</a>
+              </div>
+        </nav>
+
+        <div class="Warning">
+            <p>⛔️: UserID is paused because of the privacy policy.</p>
+        </div>
+        
+        <div class="Main">
+            <h1><strong>Welcome to the official website of Ashley!</strong></h1>
+            <h3 class="Title2">I am Ashley, a curious individual who loves to explore everything!</h3>
+            <h3 class="p">I am a secondary school student and am interested in the developement of websites!</h3>
+            <h3 class="p">This website is my personal website with PERMANENT URL</h3>
+            <h3 class="p">I have also services to build the personal website.</h3>
+            <a href="Plans.html">Click here to contact me</a>
+            <h3 class="p">See more in <a href="AboutUs.html">"About us"</a></h3>
+            <h3>And, Remember that I am a boy OK...</h3>
+        </div>
+
+        <div class="AOS4">
+            <img class="AOS4img" src="/AOS4_pre.png" height="250px">
+            <div class="AOS4txt">AOS4 <br> Coming Soon</div>
+            <a class="AOS4btn" href="/AOS4_preview">Learn More</a>
+        </div>
+        
+    <nav class="navbar2">
+        <a href="index2.html">中文</a>
+        <p>Ashley 2025 Zhanyi Zhou</p>
+    <!--https://i.ibb.co/KjZ0wgkV/Ashley-light.png-->
+    </nav>
+    <script>
+        function Device() {
+            if (window.innerWidth < 768) {
+                window.onload = function(){
+                    alert('You are a mobile user. Some contents may not display.')
+                }
+            }
+        }
+        Device()
+    </script>
+    </body>
+</html>
