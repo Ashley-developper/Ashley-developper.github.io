@@ -1,232 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+		<!-- Copyright © 2025 Zhanyi Zhou. All rights reserved. -->
+		<!-- Copyright © 2025 Ashley Studio (Zhanyi Zhou). All rights reserved. -->
+        <!-- This is official code for AOS4 -->
         <meta charset="UTF-8">
-        <meta name="description" content="Ashley studio, interested in everthing in the world. We also help people building personal website, like this.">
-        <meta name="keywords" content="Ashley, Interest, Personal website, Ashley Studio">
+        <!-- META FOR GOOGLE CONSOLE -->
+        <meta name="description" content="Zhanyi Zhou, Personal Website">
+        <meta name="keywords" content="Zhanyi Zhou, Interest, Personal website, Zhanyi">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="author" content="Zhanyi Zhou">
-        <title> Ashley</title>
+        <title> AOS 4 developper BETA</title>
         <link rel="icon" href="https://i.ibb.co/DPCmRdtg/Ashley-light.png">
-        <style>
-            body{
-                font-family: Garamond, serif;
-                font-size: 25px
-            }
-
-            @media screen and (max-width: 768px){
-            body{
-              font-size: 15px
-            }
-          }
-
-          @media screen and (max-width: 768px){
-            .navbar{
-              font-size: 10px
-            }
-          }
-
-        @media screen and (max-width: 768px){
-            .Main2 h1,
-            .Main2 h2{
-              font-size: 30px
-            }
-          }
-
-
-            .Main{
-                background-color: rgba(0, 0, 0, 0.5);
-                color: white;
-                padding: 40px 10px;
-                text-align: center;
-                margin: 5px 10px;
-                border-radius: 20px;
-            }
-
-            .Main h1 {
-                color: white;
-                margin-top: 5px;
-                margin-left: 8px;
-                display: flex;
-                justify-content: center;
-
-            }
-
-            .p{
-                margin-top: 80px;
-                line-height: 50px;
-                display: flex;
-                justify-content: center;
-            }
-
-            .AOS4{
-                background-color: rgba(0, 0, 0, 0.5);
-                color: white;
-                padding: 40px 10px;
-                text-align: center;
-                margin: 5px 10px;
-                width: 50%;
-                border-radius: 20px;
-            }
-
-            .AOS4txt{
-                font-family: 'Roboto Mono';
-                font-size: 35px;
-            }
-
-            .AOS4img {
-                border-radius: 25px;
-                width: 100%;
-                height: auto;
-            }
-
-            .AOS4btn {
-                display: none;
-            }
-
-            .navbar{
-                position: fixed;
-                left: 0;
-                right: 0;
-                top: 0;
-                background-color: rgba(0, 0, 0, 0.5);
-                height:30px;
-                padding: 10px 40px;
-                align-items: center;
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .hamburger{
-              display:none;
-            }
-
-            .hamburger-items{
-              display:flex;
-              justify-content: space-between;
-              gap: 20px;
-            }
-
-            .Warning{
-                background-color: #eed202;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 55px;
-                border-radius: 20px;
-                display: flex;
-            }
-            .Warning p {
-                align-items: center;
-                margin-left: 8px
-            }
-            
-            .navbar2{
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: #000000;
-                height:30px;
-                padding: 10px 40px;
-                align-items: center;
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .navbar a {
-                color: white;
-                text-decoration: none;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .navbar2 a{
-                color:rgb(255, 255, 255);
-                text-decoration: none;
-                align-items: center;
-            }
-
-            @media screen and (max-width: 768px){
-            .navbar a:hover{
-                  color: inherit;
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Anton">
+            <style>
+                body{
+                    background: white;
+                    font-family: Garamond, serif;
+                    font-size: 25px;
                 }
-              }
             
-            .navbar2 p{
-                color:rgb(255, 255, 255);
-                text-decoration: none;
-                align-items: center;
-            }
+                .Island {
+					z-index: 9999;
+                    will-change: width, opacity, height;
+                    position: fixed;
+                    display: flex;
+                    background-color: black;
+                    width: 170px;
+                    height: 40px;
+                    left: 50%;
+                    top: 14px;
+                    transform: translateX(-50%);
+                    border-radius: 20px 20px 20px 20px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    justify-content: center;
+                    align-items: center;
+                }
 
-            .navbar a:hover {
-                color: blue;
-                font-size: 26px;
-                transition: 0.5s;
-                border-radius: 5px;
+                .grow {
+                    padding: 0px 10px;
+                    min-width: 120px;
+                    width: 270px;
+                    height: 40px;
+                }
 
-            }
+                .Island2 {
+					z-index: 9999;
+                    will-change: width, opacity, height;
+                    position: fixed;
+                    display: flex;
+                    background-color: black;
+                    width: 0px;
+                    height: 0px;
+                    left: 50%;
+                    top: 60px;
+                    transform: translateX(-50%);
+                    border-radius: 29px 29px 29px 29px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    justify-content: center;
+                    align-items: center;
+                }
 
-            .video-background {
-                position: fixed;
-                top: 0;
-                left:0;
-                min-width: 100%;
-                min-height: 100%;
-                z-index: -1;      
-            }
+                .grow2 {
+                    padding: 0px 10px;
+                    width: 500px;
+                    height: 40px;
+                }
+            
+                .text {
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    top: -20px;
+                    display: flex;
+                    color: white;
+                    opacity: 1;
+                    transition: all 1s ease;
+                }
 
-        </style>
+                .hidden {
+                    opacity: 0;
+                    transition: 0.3s;
+                }
+            
+                .logo {
+                    opacity: 1;
+                    position: fixed;
+                    display: flex;
+                    left: 7px;
+                    top: 5px;
+                }
+
+                .hamburger {
+                    color: white;
+                    opacity: 1;
+                    position: fixed;
+                    display: flex;
+                    justify-content: space-between;
+                    right: 8px;
+                    top: -4px;
+                    font-size: 30px;
+                }
+            
+                .sections {
+                    display: flex;
+                    opacity: 1;
+                    justify-content: space-between;
+                    align-items: center;
+                    transition: all 1s ease;
+                }
+
+                .sections a{
+                    display: flex;
+                    overflow: hidden; 
+                    height: auto;
+                    opacity: 1;
+                    color: white;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                    padding: 10px;
+                }
+
+                .sections a:hover{
+                    display: flex;
+                    overflow: hidden; 
+                    opacity: 1;
+                    color: white;
+                    text-decoration: underline;
+                    transition: all 1s ease;
+                    padding: 10px;
+                }
+
+                .sechid {
+                    position: absolute;
+                    opacity: 0;
+                    overflow: hidden; 
+                    pointer-events: none;
+                    transition: all 0.2s ease;
+                }
+
+                .intro {
+                    background-color: antiquewhite;
+                    position: absolute;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    top: 0;
+                    left: 0px;
+                    z-index: -1;
+                    flex-direction: column;
+                }
+
+                .titleA1 {
+                    color:orange;
+                    font-weight: bold;
+                    margin-top: 145px;
+                }
+
+                .cotitA1 {
+                    color: cornflowerblue;
+                    font-weight: bold;
+                }
+
+                .img2 {
+                    position: absolute;
+                    height: 60px;
+                    top: 65px;
+                }
+
+				.QA1 {
+					position: absolute;
+					top: 370px;
+					left: 20px;
+					right: 50%;
+					background-color: rgba(255, 243, 222, 0.8);
+					border-radius: 20px;
+				}
+
+				#Q1 {
+					position: relative;
+					font-family: Impact, Charcoal, sans-serif;
+					font-size: 60px;
+					font-weight: 800;
+					letter-spacing: 2px;
+					margin-left: 10px;
+				}
+					
+				 #p1 {
+                    position: relative;
+					margin-left: 10px;
+					margin-right: 10px;
+                }
+
+				#img1 {
+					position: absolute;
+					top: 140px;
+					left: 110%;
+					border-radius: 20px;
+					height: 460px;
+					width: auto;
+				}
+				#img2 {
+					position: absolute;
+					top: 380px;
+					right: 0%;
+					width: 200px;
+					height: auto;
+				}
+
+				#img3 {
+					position: absolute;
+					top: 320px;
+					left: -100px;
+					width: 820px;
+					height: auto;
+				}
+				
+				#txt1 {
+					position: absolute;
+					top: 520px;
+					right: 0%;
+					font-family: "Chalkduster", fantasy;
+				}
+
+				.msg {
+                    will-change: width, opacity, height;
+                    position: fixed;
+                    display: flex;
+                    background: rgba(255, 255, 255, 0.3);
+   				 	backdrop-filter: blur(10px);
+    				border-radius: 16px;
+    				border: 1px solid rgba(255, 255, 255, 0.2); 
+                    width: 230px;
+                    height: 120px;
+                    top: 14px;
+					left: -990px;
+                    border-radius: 20px ;
+                    transition: all 0.5s ease;
+                    justify-content: center;
+                    align-items: center;
+					color: black;
+					opacity: 1;
+					z-index: 9999;
+				}
+
+				.msg2 {
+					will-change: width, opacity, height;
+                    position: fixed;
+                    display: flex;
+                    background: rgba(255, 255, 255, 0.3);
+   				 	backdrop-filter: blur(6px);
+    				border: 1px solid rgba(255, 255, 255, 0.2); 
+                    width: 290px;
+                    height: 90px;
+                    top: 14px;
+					left: 10px;
+                    border-radius: 20px;
+                    transition: all 0.7s ease;
+                    justify-content: center;
+                    align-items: center;
+					opacity: 1;
+					color: black;
+					padding: 6px;
+					z-index: 9999;
+					box-shadow: 
+        			0 0 3px rgba(0, 0, 0, 0.4),
+        			0 0 5px rgba(0, 0, 0, 0.3),
+        			0 0 7px rgba(0, 0, 0, 0.2);
+				}
+
+				.QA2 {
+					position: absolute;
+					top: 1000px;
+					left: 20px;
+					background-color: rgba(255, 243, 222, 0.8);
+					border-radius: 20px;
+				}
+
+				#Q2 {
+					position: relative;
+					font-family: Impact, Charcoal, sans-serif;
+					font-size: 60px;
+					font-weight: 800;
+					letter-spacing: 2px;
+					margin-left: 10px;
+				}
+					
+				 #p2 {
+                    position: relative;
+					margin-left: 10px;
+					margin-right: 10px;
+                }
+
+				#img4 {
+					position: absolute;
+					top: 380px;
+					width: 900px;
+					height: auto;
+					transform: translateX(55%);
+					border-radius: 20px;
+				}
+
+				#txt2 {
+					position: absolute;
+					top: 220px;
+                    left: 830px;
+					font-size: 65px;
+					font-family: Verdana, Geneva, sans-serif;
+				}
+
+				.endnav {
+					position: absolute;
+					display: flex;
+					flex-direction: row;
+					top: 2300px;
+					left: 0px;
+                    height: 300px;
+					right: 0px;
+					buttom: 0px;
+					background-color: rgb(242,242,245);
+				}
+
+				.endnav1 {
+					display: flex;
+					flex-direction: column;
+					font-family: "American Typewriter Light", "American Typewriter", serif;
+					font-size: 20px;
+					margin: 0px 12px;
+				}
+
+				.endnav1 {
+					color: rgb(23,23,23);
+				}
+				
+				.SM1 {
+					text-decoration: none;
+					color: rgb(64,64,65);
+					margin: 5px 0;
+					cursor: pointer;
+				}
+
+				.SM2 {
+					text-decoration: none;
+					color: rgb(173,173,175);
+					margin: 5px 0;
+					cursor: not-allowed;
+				}
+
+				.SM2:active{
+					color: rgb(173,173,175);
+				}
+
+				.endnav2 {
+					display: flex;
+					flex-direction: column;
+					font-family: "American Typewriter Light", "American Typewriter", serif;
+					font-size: 20px;
+				}
+				
+        </style> 
     </head>
-
+    <!-- BODY PART (NAVBAR)-->
     <body>
-        <video autoplay loop muted playsinline class="video-background">
-            <source src="67358-521707474_tiny.mp4" type="video/mp4">
-        </video>
+        <!-- STILL SOME ISSUES NOT SOLVED YET-->
         <nav class="navbar">
-            <a href="/"><img id="Image1" src="https://i.ibb.co/KjZ0wgkV/Ashley-dark.png" width="50" height="50"></a>
-            <div class='hamburger-items'>
-              <a id="Button1" href="/AboutUs">About us</a>
-              <a id="Button3" href="/MoreInfo">More information</a>
-              <a id="Button4" href="/Contact">To reach us</a>
-              <a id="Button5" href="/UpdateLog">Update log</a>
-              </div>
+            <div class="Island grow">
+                <p class="text hidden"></p>
+                <a class="logo" href="/"><img src="https://i.ibb.co/KjZ0wgkV/Ashley-light.png" width="30px" height="auto"></a>
+                <div class='hamburger'>☰</div>
+            </div>
+            <div class="navbar2">
+                <div class="Island2">
+                    <div class="sections sechid">
+                        <a class= "txt" href="/AboutUs">About Us</a>
+                        <a class= "txt" href="/Moreinfo">More info</a>
+                        <a class= "txt" href="/Contact">Contact</a>
+                        <a class= "txt" href="/UpdateLog">Update Log</a>
+                    </div>
+                </div>           
+            </div>
         </nav>
 
-        <div class="Warning">
-            <p>⛔️: UserID is paused because of the privacy policy.</p>
-        </div>
-        
-        <div class="Main">
-            <h1><strong>Welcome to the official website of Ashley!</strong></h1>
-            <h3 class="Title2">I am Ashley, a curious individual who loves to explore everything!</h3>
-            <h3 class="p">I am a secondary school student and am interested in the developement of websites!</h3>
-            <h3 class="p">This website is my personal website with PERMANENT URL</h3>
-            <h3 class="p">I have also services to build the personal website.</h3>
-            <a href="Plans.html">Click here to contact me</a>
-            <h3 class="p">See more in <a href="AboutUs.html">"About us"</a></h3>
-            <h3>And, Remember that I am a boy OK...</h3>
+		<div class="msg"></div>
+		
+        <div class="intro">
+            <img class="img2" src="HELLOAPPLE.png">
+            <h1 class="titleA1">Zhanyi Zhou</h1>
+            <h2 class="cotitA1">Personal website</h2>
         </div>
 
-        <div class="AOS4">
-            <img class="AOS4img" src="/AOS4_pre.png" height="250px">
-            <div class="AOS4txt">AOS4 <br> Coming Soon</div>
-            <a class="AOS4btn" href="/AOS4_preview">Learn More</a>
-        </div>
-        
-    <nav class="navbar2">
-        <a href="index2.html">中文</a>
-        <p>Ashley 2025 Zhanyi Zhou</p>
-    <!--https://i.ibb.co/KjZ0wgkV/Ashley-light.png-->
-    </nav>
-    <script>
-        function Device() {
-            if (window.innerWidth < 768) {
-                window.onload = function(){
-                    alert('You are a mobile user. Some contents may not display.')
+		<div class="QA1">
+			<h1 id="Q1"><strong>Hey! Nice to see you!👀</strong></h1>
+			<p id="p1">Hi! I’m Zhanyi Zhou, a 13-year-old student in Québec, Canada. This website is my space to share what I’m learning and creating. Thanks for visiting!</p>
+			<img id="img1" src="https://thelinknewspaper.ca/images/made/images/articles/_resized/school_900_676_90.jpg" alt="Picture of my school">
+			<img id="img2" src="https://cdn-icons-png.freepik.com/512/2351/2351966.png" alt="arrow icon">
+			<img id="img3" src="https://i.ibb.co/7Hr4Q3S/Drawing-2.png" alt="Drawing">
+			<h2 id="txt1">My school</h2>
+		</div>
+
+		<div class="QA2">
+			<h1 id="Q2"><strong>What are Your strengths?🧠</strong></h1>
+			<p id="p2">I speak three languages (French, English and chinese), I can play piano and a bit guitare, I knwo how to program (HTML, CSS, JS and Python). Skating and skateboards are interesting stuffs for me, and, YEP</p>
+			<img id="img4" src="https://storage.googleapis.com/creatorspace-public/users%2Fcle685ei80158oc0y35xsxb5s%2FiC8oQjkRnV71cmuV-drone_vieux_port-4.jpg" alt="City I live">
+			<p id="txt2">Montreal</p>
+		</div>
+
+		<div class="endnav">
+			<div class="endnav1">
+				<h2 class="endnav1">Social media </h2>
+				<a href="http://bilibili.com" class="SM1">Bilibili</a>
+				<a class="SM2">Youtube</a>
+				<a class="SM2">Facebook</a>
+				<a class="SM2">Intagram</a>
+			</div>
+
+			<div class="endnav2">
+				<h2 class="endnav1">Pages</h2>
+				<a href="/AboutUs" class = "SM1">About Me</a>
+				<a href="/MoreInfo" class = "SM1">More information</a>
+				<a href="/Contact" class = "SM1">Contact me</a>
+				<a href="/UpdateLog" class = "SM1">Update Log</a>
+			</div>
+			
+		</div>
+
+	
+		<!--All code was properly made by Zhanyi Zhou :)-->
+        <script defer>
+            //Javascript for the navbar island
+            //Started June 16 17:48:07
+            const Island = document.querySelector('.Island')
+            const Islandgrow = document.querySelector('.Island.grow')
+            const text = document.querySelector('.text')
+            const hidden = document.querySelector('.hidden')
+            const hamburger = document.querySelector('.hamburger')
+            const Island2 = document.querySelector('.Island2')
+            const Islandgrow2 = document.querySelector('.Island2.grow2')
+            const sections = document.querySelector('.sections')
+			const msg = document.querySelector ('.msg')
+			const SM2 = document.querySelectorAll ('.SM2')
+
+            Island.classList.remove ('grow');
+            Island.addEventListener('click',function() {
+                text.innerText='Main Page';
+                Island.classList.toggle ('grow');
+                if (Island.classList.contains('grow')){
+                    text.classList.remove ('hidden');
+                } else {
+                    text.classList.add ('hidden');
                 }
-            }
-        }
-        Device()
-    </script>
+            })
+
+            hamburger.addEventListener('click',function() {
+                console.log('hamburger clicked');
+                Island2.classList.toggle ('grow2');
+                sections.classList.toggle ('sechid');
+                Island.classList.add('grow');
+            });
+
+			window.addEventListener("load", function() {
+    			msg.classList.add('msg2')
+				msg.innerText='Hey, Welcome to my website! Enjoy your time ~'
+				setTimeout(() => {
+    				msg.classList.remove("msg2");
+				}, 5000);
+			});
+
+			SM2.forEach (SM2GR =>{
+					SM2GR.addEventListener("click", function() {
+					msg.classList.add('msg2')
+					msg.innerText='Sorry, we don’t have YouTube, Facebook, or Instagram accounts. lol'
+					setTimeout(() => {
+    					msg.classList.remove("msg2");
+					}, 5000);
+				}
+			)});
+
+        </script>
     </body>
 </html>
