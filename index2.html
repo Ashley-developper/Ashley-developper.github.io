@@ -1,200 +1,709 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title> Ashley</title>
-        <meta name="google-site-verification" content="efTZmhz-Pt-LwbcX1SuSRUnccmvNFs8VXWo0XjI7x7M" />
-        <link rel="icon" href="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png">
-        <style>
-            body{
-                background: linear-gradient(to right, #a2c2e8, #dfeefd);
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-                margin:0;
-                font-size: 25px
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Flight Simulator - Ultra Smooth</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', monospace; }
 
-            .Main{
-                background-image:url('https://img.freepik.com/premium-vector/blue-white-abstract-background-design-well-use-as-wallpaper-website-template-background_756251-43.jpg');
-                background-repeat: no-repeat;
-                background-size: 5000px 12000px;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 5px;
-                border-radius: 20px;
-            }
+        /* UI LAYOUT */
+        #hud-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
+            padding: 20px; box-sizing: border-box;
+        }
 
-            .Main h1 {
-                margin-top: 5px;
-                margin-left: 8px;
-                color:rgb(98, 0, 255);
-                display: flex;
-                justify-content: center;
+        /* TOP BAR */
+        .top-hud { display: flex; gap: 20px; }
+        .instrument {
+            background: rgba(0, 10, 20, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #0ff;
+            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .label { font-size: 10px; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .value { font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+        .unit { font-size: 12px; color: #666; margin-left: 4px; }
 
-            }
+        /* MISSION PANEL */
+        #mission-panel {
+            position: absolute; top: 20px; right: 20px; width: 300px;
+            background: rgba(0, 15, 25, 0.9); border: 1px solid #ff9800; border-radius: 6px;
+            padding: 15px; color: #ff9800; pointer-events: auto;
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.15);
+        }
+        #mission-text { font-size: 14px; font-style: italic; margin-top: 10px; color: #fff; min-height: 40px; }
 
-            .p{
-                color:#000000 ;
-                margin-top: 80px;
-                line-height: 50px;
-                display: flex;
-                justify-content: center;
-            }
+        /* THROTTLE */
+        #throttle-wrapper {
+            position: absolute; left: 20px; bottom: 100px; width: 40px; height: 250px;
+            background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 4px;
+            overflow: hidden;
+        }
+        #throttle-bar {
+            position: absolute; bottom: 0; width: 100%; height: 0%;
+            background: linear-gradient(to top, #e65100, #ffcc00);
+            transition: height 0.1s;
+        }
 
-            .navbar{
-                position: fixed;
-                left: 0;
-                right: 0;
-                top: 0;
-                background-color: #ffffff;
-                height:30px;
-                padding: 10px 40px;
-                align-items: center;
-                display: flex;
-                justify-content: space-between;
-            }
+        /* COMMS */
+        #comms-box {
+            position: absolute; bottom: 20px; right: 20px; width: 350px; height: 240px;
+            background: rgba(5, 10, 15, 0.95); border: 1px solid #0078d7; border-radius: 6px;
+            display: flex; flex-direction: column; pointer-events: auto;
+            box-shadow: 0 0 20px rgba(0, 120, 215, 0.2);
+        }
+        #comms-log {
+            flex: 1; overflow-y: auto; padding: 12px; font-size: 12px;
+            color: #fff; font-family: 'Consolas', monospace;
+            border-bottom: 1px solid rgba(0, 120, 215, 0.3);
+        }
+        .btn-row { display: flex; }
+        .comms-btn {
+            flex: 1; background: rgba(0, 60, 100, 0.3); border: none; color: #00aaff;
+            padding: 14px; cursor: pointer; border-right: 1px solid rgba(0, 120, 215, 0.3);
+            font-weight: bold; text-transform: uppercase; font-size: 11px; transition: 0.2s;
+        }
+        .comms-btn:hover { background: rgba(0, 120, 215, 0.4); color: #fff; }
+        .comms-btn:active { background: #0078d7; }
+        .mission-btn {
+            width: 100%; padding: 8px; background: rgba(255, 152, 0, 0.1); 
+            border: 1px solid #ff9800; color: #ff9800; font-weight: bold; 
+            cursor: pointer; margin-top: 10px; transition: 0.2s;
+        }
+        .mission-btn:hover { background: rgba(255, 152, 0, 0.3); color: #fff; }
 
-            .Warning{
-                background-color: #eed202;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 55px;
-                border-radius: 20px;
-                display: flex;
-            }
-            .Warning p {
-                height: 50px
-                align-items: center;
-                margin-left: 8px
-            }
+        /* SPLASH SCREEN */
+        #splash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+        h1 { font-size: 64px; margin: 0; letter-spacing: 4px; text-shadow: 0 0 30px rgba(0,120,215,0.8); }
+        .start-btn {
+            margin-top: 40px; padding: 15px 60px; font-size: 22px; font-weight: bold;
+            color: #fff; background: #0078d7; border: none; border-radius: 4px;
+            cursor: pointer; letter-spacing: 2px; box-shadow: 0 0 20px rgba(0,120,215,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,120,215,0.6); }
 
-            .Main2{
-                background-image:url('https://www.collinsdictionary.com/images/full/paper_111691001_1000.jpg?version=6.0.83');
-                height: 1000px;
-                background-repeat: no-repeat;
-                background-size: cover;
-                margin-left: 18px;
-                margin-right: 18px;
-                margin-top: 5px;
-                border-radius: 20px;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .Main2 h1 {
-                font-size: 100px;
-                margin-top: 8px;
-                margin-left: 10px;
-                color:black;
-            }
-
-            #Main2h2 {
-                font-size: 80px;
-                margin-top: 8px;
-                margin-left: 10px;
-                color: #009999;
-            }
-            
-            .navbar2{
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: #000000;
-                height:30px;
-                padding: 10px 40px;
-                align-items: center;
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .navbar a {
-                color:rgb(0, 0, 0);
-                text-decoration: none;
-                align-items: center;
-            }
-
-            .navbar2 a{
-                color:rgb(255, 255, 255);
-                text-decoration: none;
-                align-items: center;
-            }
-
-            .navbar2 p{
-                color:rgb(255, 255, 255);
-                text-decoration: none;
-                align-items: center;
-            }
-
-            .navbar a:hover {
-                background-color: #fafafa;
-                color: #000000;
-                transition: 0.5s;
-                border-radius: 5px;
-
-            }
-            
-            .Title2{
-                color: #087074;
-                margin:8px 8px;
-                display: flex;
-                justify-content: center;
-            }
-
-            #LUT {
-                text-decoration: overline;
-                margin:8px 8px;
-                line-height: 10px;
-                font-size:13px
-            }
-            #LUT2 {
-                margin:8px 8px;
-                line-height: 10px;
-                font-size: 13px;
-            }
-        </style>
-        <script>
-        </script>
-    </head>
-
-    <body>
-        <nav class="navbar">
-            <a href="index2.html"><img id="Image1" src="https://i.ibb.co/d01JWczZ/f32846dd-54a5-4332-a509-c93f6c0ab54e-removebg-preview.png" width="50" height="50"></a>
-            <a id="Button1" href="AboutUs.html">关于我们</a>
-            <!--<a id="Button2" href="News.html">News in Ashley </a>-->
-            <a id="Button3" href="MoreInfo.html">更多信息</a>
-            <a id="Button4" href="Contact.html">联系我们</a>
-            <a id="Button5" href="UpdateLog.html">更新日志</a>
-            <!--<a id="Button6" href="UpdateLog.html">Final Exam</a>-->
-        </nav>
-
-        <div class="Warning">
-            <p>⛔️: 此网站在 6月23日 至 8月25日 暂停服务</p>
-        </div>
+        /* HELPER CLASSES */
+        .loader { display: inline-block; width: 10px; height: 10px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
-        <div class="Main">
-            <h1>介绍Ashley官网</h1>
-            <h3 class="Title2">Ashley 是一个研究一切的工作室！！</h3>
-            <h3 class="p">我们在中学学习，我们踢足球，我们甚至可以开发网站！！</h3>
-            <h3 class="p">本网站是我们的个人网站，网址永久有效</h3>
-            <h3 class="p">我们还提供建立个人网站的服务。<a href="Plans.html">点击此处查看计划</a></h3>
-            <h3 class="p">查看更多<a href="AboutUs.html">"关于我们"（英语）</a></h3>
+        /* SCROLLBAR */
+        #comms-log::-webkit-scrollbar { width: 6px; }
+        #comms-log::-webkit-scrollbar-thumb { background: #005a9e; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <!-- SPLASH -->
+    <div id="splash">
+        <h1>TITAN FLIGHT</h1>
+        <p style="color:#8aa; font-size: 18px; margin-top: 10px;">SMOOTH CAM • HIGH FIDELITY • AI POWERED</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px 40px; text-align: left; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 8px; margin-top: 40px; border: 1px solid #333;">
+            <div><span style="color:#00aaff; font-weight:bold">SHIFT</span> &nbsp; Throttle Up</div>
+            <div><span style="color:#00aaff; font-weight:bold">SPACE</span> &nbsp; Brake</div>
+            <div><span style="color:#00aaff; font-weight:bold">W / S</span> &nbsp; Pitch</div>
+            <div><span style="color:#00aaff; font-weight:bold">A / D</span> &nbsp; Roll</div>
+            <div><span style="color:#00aaff; font-weight:bold">Q / E</span> &nbsp; Yaw (Steering)</div>
+            <div><span style="color:#00aaff; font-weight:bold">V</span> &nbsp; Change Cam</div>
         </div>
 
-        <div class="Main2">
-            <h1><em>好运~</em></h1>
-            <h1 id="Main2h2">为期末考试做准备</h1>
+        <button class="start-btn" onclick="startSim()">START ENGINE</button>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud-layer">
+        <div class="top-hud">
+            <div class="instrument">
+                <span class="label">Airspeed</span>
+                <span class="value" id="hud-spd">0</span><span class="unit">KTS</span>
+            </div>
+            <div class="instrument">
+                <span class="label">Altitude</span>
+                <span class="value" id="hud-alt">0</span><span class="unit">FT</span>
+            </div>
+            <div class="instrument">
+                <span class="label">Heading</span>
+                <span class="value" id="hud-hdg">360</span><span class="unit">DEG</span>
+            </div>
+            <div class="instrument">
+                <span class="label">Gear</span>
+                <span class="value" id="hud-gear" style="color:#0f0">DOWN</span>
+            </div>
         </div>
-    
-    <nav class="navbar2">
-        <a href="index.html">English</a>
-        <p>Ashley 2025 周湛一</p>
 
-    </nav>
+        <div id="throttle-wrapper">
+            <div id="throttle-bar"></div>
+        </div>
 
-        <br>
-        <br>
-        <!-- <h5 id="LUT"><a href="index2.html">Français&nbsp;</a>Last update time: 2025/5/17 21h | <a href="Copyright.html">Copyright</a> © 2025 Ashley All rights reserved. ZHANYI ZHOU</h5> -->
-    </body>
+        <div id="mission-panel">
+            <span style="font-size:11px; color:#aaa; text-transform:uppercase; letter-spacing:1px;">Flight Objective</span>
+            <div id="mission-text">System Standby...</div>
+            <button class="mission-btn" onclick="askGemini('mission')">GENERATE MISSION</button>
+        </div>
+
+        <div id="comms-box">
+            <div id="comms-log">
+                <div style="color:#666;">System Initialized.</div>
+            </div>
+            <div class="btn-row">
+                <button class="comms-btn" onclick="askGemini('atc')">Tower</button>
+                <button class="comms-btn" onclick="askGemini('copilot')">Co-Pilot</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- LIBS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+
+    <script>
+        // --- CONFIG ---
+        const CONFIG = {
+            gravity: 0.12,
+            runwayLen: 10000,
+            runwayWidth: 250,
+            maxThrust: 3.5,
+            lift: 0.0009,
+            drag: 0.0012,
+            camSmoothness: 0.08, // Lower = Smoother lag
+            turnSpeed: 1.2
+        };
+        const apiKey = ""; // API Key injected at runtime
+
+        // --- GLOBALS ---
+        let scene, camera, renderer, clock;
+        let planeGroup, propellerL, propellerR;
+        let cityInstancedMesh;
+        let cameraTarget = new THREE.Vector3();
+        
+        const keys = { w:false, s:false, a:false, d:false, q:false, e:false, shift:false, space:false };
+        
+        const physics = {
+            speed: 0, throttle: 0,
+            velocity: new THREE.Vector3(),
+            rotVelocity: { x:0, y:0, z:0 },
+            isGrounded: true,
+            gearDown: true,
+            crashed: false
+        };
+        
+        let camMode = 0; // 0: Smooth Chase, 1: Cockpit, 2: Tower
+
+        // --- INIT ---
+        function startSim() {
+            document.getElementById('splash').style.display = 'none';
+            init();
+            askGemini('mission');
+        }
+
+        function init() {
+            clock = new THREE.Clock();
+            
+            // SCENE
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.FogExp2(0x87CEEB, 0.00015); // Distance fog
+
+            // CAMERA
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 50000);
+            camera.position.set(0, 20, 100); // Initial pos
+
+            // RENDERER
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // LIGHTING
+            const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+            scene.add(hemi);
+
+            const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+            sun.position.set(2000, 4000, 1000);
+            sun.castShadow = true;
+            // Massive shadow map for the airport
+            sun.shadow.mapSize.width = 4096;
+            sun.shadow.mapSize.height = 4096;
+            sun.shadow.camera.far = 10000;
+            const d = 4000;
+            sun.shadow.camera.left = -d; sun.shadow.camera.right = d;
+            sun.shadow.camera.top = d; sun.shadow.camera.bottom = -d;
+            scene.add(sun);
+
+            // BUILD WORLD
+            createEnvironment();
+            createHighFidelityPlane();
+
+            // EVENTS
+            window.addEventListener('resize', onResize);
+            document.addEventListener('keydown', e => onKey(e, true));
+            document.addEventListener('keyup', e => onKey(e, false));
+
+            animate();
+        }
+
+        // --- WORLD GENERATION ---
+        function createEnvironment() {
+            // 1. Infinite Ground/Ocean
+            const groundGeo = new THREE.PlaneGeometry(100000, 100000);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x102030, roughness: 0.4 });
+            const ground = new THREE.Mesh(groundGeo, groundMat);
+            ground.rotation.x = -Math.PI/2;
+            ground.position.y = -0.5;
+            scene.add(ground);
+
+            // 2. Airport Zone (Center)
+            const airportGroup = new THREE.Group();
+            
+            // Runway
+            const rwGeo = new THREE.PlaneGeometry(CONFIG.runwayWidth, CONFIG.runwayLen);
+            const rwMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
+            const runway = new THREE.Mesh(rwGeo, rwMat);
+            runway.rotation.x = -Math.PI/2;
+            runway.receiveShadow = true;
+            airportGroup.add(runway);
+
+            // Markings
+            const markMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const centerLine = new THREE.Mesh(new THREE.PlaneGeometry(4, CONFIG.runwayLen - 200), markMat);
+            centerLine.rotation.x = -Math.PI/2;
+            centerLine.position.y = 0.1;
+            airportGroup.add(centerLine);
+
+            // Grass Surround
+            const grassGeo = new THREE.PlaneGeometry(CONFIG.runwayWidth + 1000, CONFIG.runwayLen + 1000);
+            const grassMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 1 });
+            const grass = new THREE.Mesh(grassGeo, grassMat);
+            grass.rotation.x = -Math.PI/2;
+            grass.position.y = -0.1;
+            grass.receiveShadow = true;
+            airportGroup.add(grass);
+
+            // Terminal Buildings (Left side)
+            const termGeo = new THREE.BoxGeometry(200, 40, 1000);
+            const termMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.2 });
+            const terminal = new THREE.Mesh(termGeo, termMat);
+            terminal.position.set(-500, 20, 0);
+            terminal.castShadow = true;
+            airportGroup.add(terminal);
+
+            // Control Tower
+            const towerBase = new THREE.Mesh(new THREE.CylinderGeometry(15, 25, 120, 8), termMat);
+            towerBase.position.set(-400, 60, 600);
+            towerBase.castShadow = true;
+            airportGroup.add(towerBase);
+            const towerCab = new THREE.Mesh(new THREE.CylinderGeometry(25, 15, 20, 8), new THREE.MeshStandardMaterial({color:0x333333}));
+            towerCab.position.set(-400, 125, 600);
+            airportGroup.add(towerCab);
+
+            scene.add(airportGroup);
+
+            // 3. City Zone (Right side, Far away)
+            // Using InstancedMesh for performance
+            const buildCount = 2000;
+            const buildGeo = new THREE.BoxGeometry(1, 1, 1);
+            // Move pivot to bottom
+            buildGeo.translate(0, 0.5, 0);
+            
+            const buildMat = new THREE.MeshStandardMaterial({ color: 0x8899aa, roughness: 0.2, metalness: 0.1 });
+            cityInstancedMesh = new THREE.InstancedMesh(buildGeo, buildMat, buildCount);
+            
+            const dummy = new THREE.Object3D();
+            const cityOffset = 3000; // Distance from runway
+            
+            for(let i=0; i<buildCount; i++) {
+                // Grid layout
+                const x = cityOffset + (Math.random() * 6000);
+                const z = (Math.random() - 0.5) * 15000;
+                const h = 50 + Math.random() * 300 + (Math.random() * 200); // Varied height
+                const w = 40 + Math.random() * 60;
+                
+                dummy.position.set(x, 0, z);
+                dummy.scale.set(w, h, w);
+                dummy.updateMatrix();
+                cityInstancedMesh.setMatrixAt(i, dummy.matrix);
+            }
+            cityInstancedMesh.castShadow = true;
+            cityInstancedMesh.receiveShadow = true;
+            scene.add(cityInstancedMesh);
+
+            // 4. Distant Terrain
+            const simplex = new SimplexNoise();
+            const terrainGeo = new THREE.PlaneGeometry(40000, 40000, 64, 64);
+            const tPos = terrainGeo.attributes.position;
+            for(let i=0; i<tPos.count; i++){
+                const x = tPos.getX(i);
+                const y = tPos.getY(i);
+                const dist = Math.sqrt(x*x + y*y);
+                let h = 0;
+                // Only mountains far away
+                if(dist > 8000) {
+                   h = simplex.noise2D(x*0.0002, y*0.0002) * 800;
+                   h = Math.max(0, h);
+                }
+                tPos.setZ(i, h);
+            }
+            terrainGeo.computeVertexNormals();
+            const terrain = new THREE.Mesh(terrainGeo, new THREE.MeshStandardMaterial({ color: 0x445544 }));
+            terrain.rotation.x = -Math.PI/2;
+            terrain.position.y = -5;
+            scene.add(terrain);
+        }
+
+        // --- PLANE BUILDER ---
+        function createHighFidelityPlane() {
+            planeGroup = new THREE.Group();
+
+            // Materials
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3, metalness: 0.3 });
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x112233, roughness: 0, metalness: 0.9 });
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.4, metalness: 0.8 });
+            const darkMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+
+            // 1. Fuselage (Main Body)
+            const fuseLen = 50;
+            const fuseRad = 4.5;
+            const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(fuseRad, fuseRad, fuseLen, 32), bodyMat);
+            fuselage.rotation.x = Math.PI/2;
+            planeGroup.add(fuselage);
+
+            // Nose (Round)
+            const nose = new THREE.Mesh(new THREE.SphereGeometry(fuseRad, 32, 16, 0, Math.PI*2, 0, Math.PI/2), bodyMat);
+            nose.rotation.x = -Math.PI/2;
+            nose.position.z = -fuseLen/2;
+            planeGroup.add(nose);
+
+            // Tail Cone
+            const tailCone = new THREE.Mesh(new THREE.CylinderGeometry(fuseRad, 0.5, 12, 32), bodyMat);
+            tailCone.rotation.x = Math.PI/2;
+            tailCone.position.z = fuseLen/2 + 6;
+            planeGroup.add(tailCone);
+
+            // Cockpit Window
+            const ckGeo = new THREE.SphereGeometry(fuseRad-0.1, 32, 16, 0, Math.PI, 0, Math.PI*0.35);
+            const cockpit = new THREE.Mesh(ckGeo, glassMat);
+            cockpit.rotation.x = -Math.PI/2;
+            cockpit.rotation.y = -Math.PI/2;
+            cockpit.position.set(0, 1.5, -fuseLen/2 + 4);
+            planeGroup.add(cockpit);
+
+            // 2. Wings (Airfoil Shape)
+            const wingShape = new THREE.Shape();
+            wingShape.moveTo(0, 0);
+            wingShape.lineTo(10, 0);   // Root width
+            wingShape.lineTo(3, 30);   // Tip width
+            wingShape.lineTo(-2, 30);  // Tip rear
+            wingShape.lineTo(-6, 0);   // Root rear
+            
+            const wingExtrude = { depth: 1.5, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.2, bevelThickness: 0.2 };
+            const wingGeo = new THREE.ExtrudeGeometry(wingShape, wingExtrude);
+            
+            const lWing = new THREE.Mesh(wingGeo, bodyMat);
+            lWing.rotation.x = Math.PI/2;
+            lWing.rotation.z = -0.15; // Sweep + Dihedral
+            lWing.position.set(3, -2, 0);
+            planeGroup.add(lWing);
+
+            const rWing = new THREE.Mesh(wingGeo, bodyMat);
+            rWing.rotation.x = Math.PI/2;
+            rWing.rotation.z = 0.15;
+            rWing.scale.y = -1; // Mirror
+            rWing.position.set(-3, -2, 0);
+            planeGroup.add(rWing);
+
+            // 3. Stabilizers
+            const vStab = new THREE.Mesh(wingGeo, bodyMat);
+            vStab.scale.set(0.6, 0.6, 0.6);
+            vStab.rotation.x = Math.PI/2;
+            vStab.rotation.y = Math.PI/2;
+            vStab.rotation.z = Math.PI/2;
+            vStab.position.set(0, 4, fuseLen/2 + 8);
+            planeGroup.add(vStab);
+
+            const hStab = new THREE.Mesh(wingGeo, bodyMat);
+            hStab.scale.set(0.45, 0.45, 0.45);
+            hStab.rotation.x = Math.PI/2;
+            hStab.rotation.z = -0.1;
+            hStab.position.set(2, 2, fuseLen/2 + 10);
+            planeGroup.add(hStab);
+            const hStabR = hStab.clone();
+            hStabR.scale.y = -0.45;
+            hStabR.rotation.z = 0.1;
+            hStabR.position.x = -2;
+            planeGroup.add(hStabR);
+
+            // 4. Engines (Turbofan Detail)
+            const engCyl = new THREE.CylinderGeometry(2.8, 2.8, 7, 24, 1, true);
+            const engHous = new THREE.Mesh(engCyl, metalMat);
+            engHous.rotation.x = Math.PI/2;
+            
+            // Intake Rim
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.2, 16, 24), metalMat);
+            rim.position.y = -3.5;
+            rim.rotation.x = Math.PI/2;
+            engHous.add(rim);
+            
+            // Fan Blades
+            const bladeGeo = new THREE.BoxGeometry(0.1, 5.4, 0.8);
+            const fan = new THREE.Group();
+            for(let i=0; i<12; i++) {
+                const b = new THREE.Mesh(bladeGeo, darkMat);
+                b.rotation.z = i * (Math.PI/6);
+                fan.add(b);
+            }
+            fan.position.y = -2;
+            fan.rotation.x = Math.PI/2;
+            engHous.add(fan);
+
+            // Attach Engines
+            const engL = engHous.clone();
+            engL.position.set(12, -3, 4);
+            planeGroup.add(engL);
+            propellerL = engL.children[1];
+
+            const engR = engHous.clone();
+            engR.position.set(-12, -3, 4);
+            planeGroup.add(engR);
+            propellerR = engR.children[1];
+
+            // 5. Gear (Simplified but present)
+            const gearStrut = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 6), metalMat);
+            const gearWheel = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 1, 16), darkMat);
+            gearWheel.rotation.z = Math.PI/2;
+            gearWheel.position.y = -3;
+            gearStrut.add(gearWheel);
+            
+            const gearNose = gearStrut.clone();
+            gearNose.position.set(0, -4, -20);
+            planeGroup.add(gearNose);
+            
+            const gearL = gearStrut.clone();
+            gearL.position.set(6, -4, 2);
+            planeGroup.add(gearL);
+            
+            const gearR = gearStrut.clone();
+            gearR.position.set(-6, -4, 2);
+            planeGroup.add(gearR);
+
+            // Initial Position
+            planeGroup.position.set(0, 8.5, 4000); // End of runway
+            planeGroup.castShadow = true;
+            scene.add(planeGroup);
+
+            // Initial Camera Target
+            cameraTarget.copy(planeGroup.position);
+            cameraTarget.y += 10;
+            cameraTarget.z += 50;
+            camera.position.copy(cameraTarget);
+        }
+
+        // --- PHYSICS ---
+        function updatePhysics(dt) {
+            if(physics.crashed) return;
+
+            // Input
+            if(keys.shift) physics.throttle += 0.5 * dt;
+            if(keys.space) physics.throttle -= 1.0 * dt;
+            physics.throttle = Math.max(0, Math.min(1, physics.throttle));
+
+            // Forces
+            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(planeGroup.quaternion);
+            const up = new THREE.Vector3(0, 1, 0).applyQuaternion(planeGroup.quaternion);
+
+            const thrustForce = forward.multiplyScalar(physics.throttle * CONFIG.maxThrust);
+            const speed = physics.velocity.length();
+            
+            // Drag
+            const dragForce = physics.velocity.clone().negate().normalize().multiplyScalar(speed * speed * CONFIG.drag);
+            if(physics.isGrounded) dragForce.multiplyScalar(4); // Ground friction
+
+            // Lift
+            let liftMag = speed * speed * CONFIG.lift;
+            // Pitch modification to lift
+            const pitchInput = (keys.s ? 1 : keys.w ? -1 : 0);
+            liftMag *= (1 + pitchInput * 0.5);
+            const liftForce = up.clone().multiplyScalar(liftMag);
+            
+            const gravity = new THREE.Vector3(0, -CONFIG.gravity, 0);
+
+            const totalForce = new THREE.Vector3().add(thrustForce).add(dragForce).add(liftForce).add(gravity);
+            
+            // Integration
+            physics.velocity.add(totalForce.multiplyScalar(dt));
+            planeGroup.position.add(physics.velocity.clone().multiplyScalar(10 * dt)); // Scaling movement
+
+            // Rotation
+            const rollInput = (keys.a ? 1 : keys.d ? -1 : 0);
+            const yawInput = (keys.q ? 1 : keys.e ? -1 : 0);
+
+            if(physics.isGrounded) {
+                // Ground handling
+                physics.rotVelocity.y = yawInput * 0.5; // Steering
+                physics.rotVelocity.x = (speed > 0.5) ? pitchInput * 0.5 : 0; // Pitch only if moving
+                physics.rotVelocity.z = 0;
+            } else {
+                // Air handling (Momentum based)
+                physics.rotVelocity.x += (pitchInput * CONFIG.turnSpeed - physics.rotVelocity.x) * 2 * dt;
+                physics.rotVelocity.z += (rollInput * CONFIG.turnSpeed - physics.rotVelocity.z) * 2 * dt;
+                // Bank induces Yaw
+                const bank = planeGroup.rotation.z;
+                physics.rotVelocity.y += ((yawInput + bank * 0.5) - physics.rotVelocity.y) * dt;
+            }
+
+            planeGroup.rotateX(physics.rotVelocity.x * dt);
+            planeGroup.rotateY(physics.rotVelocity.y * dt);
+            planeGroup.rotateZ(physics.rotVelocity.z * dt);
+
+            // Collision / Ground
+            const groundH = 8.5;
+            if(planeGroup.position.y < groundH) {
+                if(physics.velocity.y < -1.5) {
+                    // Simple reset for crash
+                    physics.velocity.set(0,0,0);
+                    planeGroup.position.set(0, groundH, 4000);
+                    planeGroup.rotation.set(0,0,0);
+                    physics.speed = 0;
+                    physics.throttle = 0;
+                } else {
+                    planeGroup.position.y = groundH;
+                    physics.velocity.y = 0;
+                    physics.isGrounded = true;
+                    // Level out
+                    planeGroup.rotation.x *= 0.95;
+                    planeGroup.rotation.z *= 0.95;
+                }
+            } else {
+                physics.isGrounded = false;
+            }
+
+            physics.speed = speed * 50; // Display knots
+        }
+
+        // --- SMOOTH CAMERA LOGIC ---
+        function updateCamera(dt) {
+            if(!planeGroup) return;
+
+            let desiredPos, lookAtPos;
+
+            if (camMode === 0) { // Chase Cam (Smooth)
+                // Calculate ideal position behind plane
+                // We use world direction to prevent camera snapping during rapid plane rotation
+                const offset = new THREE.Vector3(0, 15, 80); 
+                offset.applyQuaternion(planeGroup.quaternion);
+                desiredPos = planeGroup.position.clone().add(offset);
+                
+                // Smoothly interpolate current camera position to desired position
+                // The factor depends on DT for consistency
+                const factor = 1.0 - Math.pow(0.01, dt); // Frame-rate independent dampening
+                camera.position.lerp(desiredPos, factor);
+                
+                // Look slightly ahead of plane
+                const lookOffset = new THREE.Vector3(0, 0, -50).applyQuaternion(planeGroup.quaternion);
+                lookAtPos = planeGroup.position.clone().add(lookOffset);
+                
+                // Also smooth the lookAt to prevent jitters
+                const currentLook = new THREE.Vector3();
+                camera.getWorldDirection(currentLook);
+                const targetLook = lookAtPos.clone().sub(camera.position).normalize();
+                
+                // Use a temporary object to lerp quaternion for lookAt smoothing could be complex
+                // Simple lookAt is usually stable enough if position is smoothed
+                camera.lookAt(lookAtPos); 
+            } 
+            else if (camMode === 1) { // Cockpit
+                const offset = new THREE.Vector3(0, 2, -22).applyQuaternion(planeGroup.quaternion);
+                camera.position.copy(planeGroup.position).add(offset);
+                const lookOffset = new THREE.Vector3(0, 0, -100).applyQuaternion(planeGroup.quaternion);
+                camera.lookAt(planeGroup.position.clone().add(lookOffset));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.05); // Cap dt for physics stability
+
+            if(planeGroup) {
+                updatePhysics(dt);
+                updateCamera(dt);
+                
+                // UI Updates
+                document.getElementById('hud-spd').innerText = Math.floor(physics.speed);
+                document.getElementById('hud-alt').innerText = Math.floor(planeGroup.position.y * 10);
+                document.getElementById('throttle-bar').style.height = (physics.throttle * 100) + '%';
+                let hdg = Math.floor(THREE.MathUtils.radToDeg(Math.abs(planeGroup.rotation.y)) % 360);
+                document.getElementById('hud-hdg').innerText = hdg.toString().padStart(3, '0');
+                
+                // Fan spin
+                if(propellerL) propellerL.rotation.z -= (0.2 + physics.throttle);
+                if(propellerR) propellerR.rotation.z -= (0.2 + physics.throttle);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- INPUTS ---
+        function onKey(e, down) {
+            const k = e.key.toLowerCase();
+            if(keys.hasOwnProperty(k)) keys[k] = down;
+            if(k === 'v' && down) camMode = (camMode + 1) % 2;
+        }
+        function onResize() {
+            camera.aspect = window.innerWidth/window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- AI ---
+        async function askGemini(type) {
+            const log = document.getElementById('comms-log');
+            const mBox = document.getElementById('mission-text');
+            
+            const alt = Math.floor(planeGroup.position.y * 10);
+            const spd = Math.floor(physics.speed);
+            const phase = physics.isGrounded ? "Ground" : "Air";
+            
+            let prompt = "";
+            if(type === 'atc') prompt = `You are Tower Control. Phase: ${phase}, Alt: ${alt}. Give succinct aviation instruction.`;
+            if(type === 'copilot') prompt = `You are Co-Pilot. Speed: ${spd}. Give short warning or compliment.`;
+            if(type === 'mission') {
+                mBox.innerText = "Generating...";
+                prompt = "Generate 1 short cool flight mission objective.";
+            }
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                const txt = data.candidates[0].content.parts[0].text;
+
+                if(type === 'mission') mBox.innerText = txt;
+                else {
+                    const pre = type === 'atc' ? 'TWR' : 'COP';
+                    const col = type === 'atc' ? '#0f0' : '#fb0';
+                    log.innerHTML += `<div style="color:${col}; margin-top:5px;"><strong>${pre}:</strong> ${txt}</div>`;
+                    log.scrollTop = log.scrollHeight;
+                }
+            } catch(e) { 
+                if(type==='mission') mBox.innerText = "Error";
+            }
+        }
+    </script>
+</body>
 </html>
-
-<!--AOS BETA, secret file until 1 June-->
