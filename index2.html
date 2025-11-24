@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -230,140 +231,167 @@
         }
 
         // --- 物理引擎核心 (Newtonian Physics) ---
-        function updatePhysics(dt) {
-            if (physics.crashed) return;
+        // --- 物理引擎核心 (Newtonian Physics) ---
+const UP = new THREE.Vector3(0, 1, 0);
+const FORWARD = new THREE.Vector3(0, 0, -1);
+const GRAVITY_VECTOR = new THREE.Vector3(0, -CONFIG.gravity * CONFIG.mass, 0);
+const tempVec3 = new THREE.Vector3();
+const localForces = new THREE.Vector3();
 
-            // 1. 输入映射
-            if (input.shift) physics.throttle = Math.min(physics.throttle + dt * 0.4, 1.0); // 慢慢推油门，模拟引擎惯性
-            if (input.space) {
-                physics.brake = true;
-                physics.throttle = Math.max(physics.throttle - dt * 2.0, 0.0); // 刹车时收油
-            } else {
-                physics.brake = false;
-            }
+// 将 THREE.js 的速度（单位: meter/s）转换为 KTS
+function speedToKnots(speed) {
+    return speed * 1.94384;
+}
 
-            // 2. 基础向量
-            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(physics.quat);
-            const up = new THREE.Vector3(0, 1, 0).applyQuaternion(physics.quat);
-            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(physics.quat);
+function updatePhysics(dt) {
+    if (physics.crashed) return;
 
-            const speed = physics.vel.length();
-            const airSpeed = physics.vel.dot(forward); // 指示空速
+    // 1. **更新推力 (Throttle)**
+    const thrustStep = 0.5 * dt; // 油门响应速度
+    if (input.shift) {
+        physics.throttle = Math.min(1.0, physics.throttle + thrustStep);
+    } else {
+        // 自动怠速/缓慢减速
+        physics.throttle = Math.max(0.0, physics.throttle - thrustStep * 0.2);
+    }
 
-            // 3. 力 (Forces) 计算 [F = ma]
-            const forces = new THREE.Vector3();
+    // 2. **姿态控制力矩 (Rotation - Pitch, Roll, Yaw)**
+    
+    // a. 获取用户输入
+    const pitchInput = input.s - input.w; // S: 抬头 (Pitch Up, 绕X轴负), W: 低头 (Pitch Down, 绕X轴正)
+    const rollInput = input.d - input.a;   // D: 右滚 (Roll Right, 绕Z轴负), A: 左滚 (Roll Left, 绕Z轴正)
+    const yawInput = input.e - input.q;    // E: 右偏 (Yaw Right, 绕Y轴负), Q: 左偏 (Yaw Left, 绕Y轴正)
+    
+    // b. 计算角加速度 / 施加力矩
+    // 使用简单的角加速度模型，忽略惯性张量简化
+    const torque = new THREE.Vector3(
+        pitchInput * CONFIG.pitchSpeed, // X轴力矩 (俯仰)
+        yawInput * CONFIG.yawSpeed,     // Y轴力矩 (偏航)
+        rollInput * CONFIG.rollSpeed    // Z轴力矩 (滚转)
+    ).multiplyScalar(dt);
 
-            // A. 推力 (Thrust)
-            const currentThrust = physics.throttle * CONFIG.maxThrust;
-            forces.add(forward.clone().multiplyScalar(currentThrust));
+    // c. 阻尼 (模拟空气阻力，防止永不停止的旋转)
+    // 角度速度阻尼: 抵抗当前的角速度
+    physics.rotVel.multiplyScalar(1.0 - CONFIG.rotDamping * dt);
 
-            // B. 阻力 (Drag)
-            // 阻力 = 0.5 * rho * v^2 * Cd * A
-            // 刹车时阻力系数剧增
-            let dragFactor = CONFIG.dragCoeff;
-            if (physics.brake && physics.grounded) dragFactor = 2.5; // 地面摩擦
-            else if (physics.brake) dragFactor = 0.15; // 空中减速板
+    // d. 更新角速度 (加速度 -> 速度)
+    physics.rotVel.add(torque);
 
-            const dragForceMag = 0.5 * 1.225 * speed * speed * dragFactor * CONFIG.wingArea;
-            const dragDir = physics.vel.clone().normalize().negate();
-            if (speed > 0.1) forces.add(dragDir.multiplyScalar(dragForceMag));
+    // e. 更新姿态 (角速度 -> 四元数)
+    // 根据角速度计算一个旋转增量四元数
+    const deltaRotation = new THREE.Quaternion();
+    const rotAxis = physics.rotVel.clone().normalize();
+    const rotAngle = physics.rotVel.length() * dt;
+    deltaRotation.setFromAxisAngle(rotAxis, rotAngle);
+    
+    // 应用到当前姿态: q_new = q_current * q_delta
+    physics.quat.multiply(deltaRotation).normalize();
+    
+    // 简化: 强制地面时的姿态（防止在跑道上倾斜）
+    if (physics.grounded) {
+        // 仅在地面上时，限制滚转和俯仰
+        const euler = new THREE.Euler().setFromQuaternion(physics.quat, 'YXZ');
+        euler.x = 0; // 俯仰归零
+        euler.z = 0; // 滚转归零
+        physics.quat.setFromEuler(euler);
+    }
 
-            // C. 升力 (Lift)
-            // 升力 = 0.5 * rho * v^2 * Cl * A
-            // 只有当速度足够快时，升力才能抵抗重力
-            // 简单模型：升力垂直于机翼
-            let liftMag = 0.5 * 1.225 * airSpeed * airSpeed * CONFIG.liftCoeff * CONFIG.wingArea;
-            forces.add(up.clone().multiplyScalar(liftMag));
 
-            // D. 重力 (Gravity)
-            forces.add(new THREE.Vector3(0, -CONFIG.mass * CONFIG.gravity, 0));
+    // 3. **线位移力 (Forces)**
+    
+    // 重置力
+    localForces.set(0, 0, 0);
 
-            // E. 地面反作用力 (Ground Reaction)
-            const wheelHeight = 2.8;
-            if (physics.pos.y <= wheelHeight) {
-                physics.grounded = true;
-                physics.pos.y = wheelHeight;
-                
-                // 消除垂直向下的速度 (硬着陆反弹逻辑可在此扩展)
-                if (physics.vel.y < 0) physics.vel.y = 0;
+    // a. 推力 (Thrust)
+    // 推力方向沿着飞机的本地 Z 轴负方向（飞机前进方向）
+    const thrustMag = CONFIG.maxThrust * physics.throttle;
+    const thrustVector = FORWARD.clone().multiplyScalar(thrustMag); // 在本地坐标系中
 
-                // 地面摩擦 (被动减速)
-                if (!physics.brake) {
-                    physics.vel.multiplyScalar(0.999); // 滚动阻力
-                }
-            } else {
-                physics.grounded = false;
-            }
+    // b. 气动力 (Aerodynamics: Lift & Drag)
+    // V² * 密度 * 系数
+    const speed = physics.vel.length();
+    const airDensity = 1.225; // 假设海平面标准大气密度
+    const V_sq = speed * speed;
+    const dynamicPressure = 0.5 * airDensity * V_sq;
 
-            // 4. 积分 (Integration)
-            // a = F / m
-            physics.acc.copy(forces).divideScalar(CONFIG.mass);
-            // v = v + a * dt
-            physics.vel.add(physics.acc.clone().multiplyScalar(dt));
-            // p = p + v * dt
-            physics.pos.add(physics.vel.clone().multiplyScalar(dt));
-
-            // 5. 旋转动力学 (Rotational Dynamics)
-            // 模拟转动惯量：越重，改变方向越慢
-            
-            // 动压 (Dynamic Pressure) 决定舵面效率
-            // 速度越快，舵越灵敏。但在地面低速时，前轮转向(Yaw)依然有效。
-            let q = 0.5 * 1.225 * speed * speed; 
-            let controlEff = Math.min(q / 5000, 1.0); // 归一化效率
-            if (physics.grounded) controlEff = 1.0; // 地面转向始终有效
-
-            const pitchInput = (input.s - input.w);
-            const rollInput = (input.a - input.d);
-            const yawInput = (input.q - input.e);
-
-            // 目标角速度
-            const targetPitch = pitchInput * CONFIG.pitchSpeed * controlEff;
-            const targetRoll = rollInput * CONFIG.rollSpeed * controlEff;
-            const targetYaw = yawInput * CONFIG.yawSpeed * controlEff;
-
-            // 地面限制：防止在跑道上翻滚或抬头(除非速度够快)
-            if (physics.grounded) {
-                // 只有速度 > 120 且拉杆才能抬头
-                if (airSpeed < 60) physics.rotVel.x = 0; 
-                else if (input.s) physics.rotVel.x += (targetPitch - physics.rotVel.x) * dt * 2;
-                
-                physics.rotVel.z = 0; // 地面锁死滚转
-                // 地面转向响应快
-                physics.rotVel.y += (targetYaw - physics.rotVel.y) * dt * 5;
-            } else {
-                // 空中：平滑插值模拟转动惯量
-                const damping = CONFIG.rotDamping;
-                physics.rotVel.x += (targetPitch - physics.rotVel.x) * dt * damping;
-                physics.rotVel.y += (targetYaw - physics.rotVel.y) * dt * damping;
-                physics.rotVel.z += (targetRoll - physics.rotVel.z) * dt * damping;
-            }
-
-            // 应用旋转
-            const deltaRot = new THREE.Quaternion().setFromEuler(
-                new THREE.Euler(physics.rotVel.x * dt, physics.rotVel.y * dt, physics.rotVel.z * dt, 'XYZ')
-            );
-            physics.quat.multiply(deltaRot);
-            physics.quat.normalize();
-
-            // 6. 状态检查
-            // 失速警告
-            const warning = document.getElementById('center-warning');
-            if (!physics.grounded && airSpeed < 80) {
-                warning.style.display = 'block';
-                warning.innerText = "STALL WARNING";
-            } else {
-                warning.style.display = 'none';
-            }
-
-            // 坠毁判定
-            if (physics.pos.y < 0 || (!physics.grounded && physics.pos.y < 3 && physics.vel.y < -8)) {
-                physics.crashed = true;
-                warning.style.display = 'block';
-                warning.innerText = "CRITICAL FAILURE";
-                physics.vel.set(0,0,0);
-            }
+    // * 升力 (Lift)
+    // 升力垂直于飞机的速度向量，但简化为垂直于机翼（本地Y轴）
+    const angleOfAttack = 0.05; // 简化为常数 AOA，或可基于俯仰角和速度向量计算
+    const liftMagnitude = dynamicPressure * CONFIG.liftCoeff * CONFIG.wingArea * (speedToKnots(speed) > 50 ? 1 : 0); // 速度过低无升力
+    
+    // 升力在本地坐标系中沿着 Y 轴正方向
+    const liftVector = UP.clone().multiplyScalar(liftMagnitude); // 在本地坐标系中
+    
+    // * 阻力 (Drag)
+    // 阻力与速度方向相反
+    const dragMagnitude = dynamicPressure * CONFIG.dragCoeff * CONFIG.wingArea;
+    
+    // 阻力在本地坐标系中沿着 Z 轴正方向（与前进方向相反）
+    const dragVector = FORWARD.clone().negate().multiplyScalar(dragMagnitude); // 在本地坐标系中
+    
+    // c. 刹车/地面摩擦力 (Brake / Ground Friction)
+    physics.brake = input.space > 0;
+    let groundFriction = 0;
+    if (physics.grounded) {
+        if (physics.brake) {
+            groundFriction = speed * CONFIG.mass * 3.5; // 刹车阻力
+        } else {
+            groundFriction = speed * CONFIG.mass * 0.1; // 滚动阻力
         }
+    }
+    const frictionVector = FORWARD.clone().negate().multiplyScalar(groundFriction); // 在本地坐标系中
 
+    // d. 集中所有本地力: 推力 + 升力 + 阻力 + 摩擦力
+    localForces.add(thrustVector).add(liftVector).add(dragVector).add(frictionVector);
+
+
+    // 4. **转换力到世界坐标系并应用牛顿第二定律**
+    
+    // 将本地力向量转换为世界坐标系
+    const worldForce = localForces.clone().applyQuaternion(physics.quat);
+
+    // 施加世界力: 重力 + 转换后的本地力
+    worldForce.add(GRAVITY_VECTOR);
+    
+    // F = ma -> a = F/m
+    physics.acc.copy(worldForce).divideScalar(CONFIG.mass);
+    
+    // 5. **更新速度和位置 (Integration)**
+    
+    // v_new = v_current + a * dt
+    physics.vel.add(physics.acc.clone().multiplyScalar(dt));
+
+    // *地面限制检查 (Ground Constraint)*
+    physics.grounded = physics.pos.y <= 0.2; // 简化: 假设地面在Y=0
+    
+    if (physics.grounded) {
+        // 如果接地，速度的Y分量强制为零，并模拟非完全弹性碰撞损失
+        physics.vel.y = 0; 
+        physics.vel.x *= 0.99; 
+        physics.vel.z *= 0.99; 
+        physics.pos.y = 0.2; // 强制停留在地面高度
+        
+        // 速度过低时停下
+        if (physics.vel.length() < 0.1) {
+            physics.vel.set(0, 0, 0);
+        }
+    } else {
+        // 在空中时，侧向速度会衰减
+        physics.vel.x *= 1.0 - dt * 0.01;
+        physics.vel.z *= 1.0 - dt * 0.01;
+    }
+
+    // p_new = p_current + v * dt
+    physics.pos.add(physics.vel.clone().multiplyScalar(dt));
+
+    // 6. **失速警告 (Stall Warning)**
+    const stallSpeed = speedToKnots(15); // 15 m/s 约 30 KTS
+    if (!physics.grounded && speedToKnots(speed) < stallSpeed) {
+        document.getElementById('center-warning').style.display = 'block';
+    } else {
+        document.getElementById('center-warning').style.display = 'none';
+    }
+}
         // --- 视觉构建：写实风格 ---
         function createRealisticWorld() {
             // 1. 地形 (Terrain)
