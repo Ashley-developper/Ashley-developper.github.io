@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASL FLIGHT SIMULATOR</title>
+    <title>Titan Aero - 硬核物理飞行模拟</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         
@@ -83,23 +82,24 @@
 <body>
 
     <div id="splash">
-        <h1>ASL <b>FLIGHT SIMULATOR</b></h1>
-        <p style="color:#8899aa; letter-spacing: 3px;"><b>BETA</b></p>
+        <h1>TITAN <b>AERO</b></h1>
+        <p style="color:#8899aa; letter-spacing: 2px;">REALISTIC PHYSICS ENGINE // V3.0</p>
         
         <div class="controls-grid">
-            <div><span class="key-box">SHIFT</span> Thrust Up</div>
-            <div><span class="key-box">SPACE</span> Brake</div>
-            <div><span class="key-box">W / S</span> Pitch</div>
-            <div><span class="key-box">A / D</span> Roll</div>
-            <div><span class="key-box">Q / E</span> Yaw</div>
-            <div><span class="key-box">V</span> View</div>
+            <div><span class="key-box">SHIFT</span> 加大推力 (起飞需按住)</div>
+            <div><span class="key-box">SPACE</span> 刹车 / 空气制动</div>
+            <div><span class="key-box">W / S</span> 俯仰 (S 起飞/抬头)</div>
+            <div><span class="key-box">A / D</span> 滚转 (主要转弯方式)</div>
+            <div><span class="key-box">Q / E</span> 偏航 (微调方向)</div>
+            <div><span class="key-box">V</span> 切换视角</div>
         </div>
 
         <div style="margin-top:20px; color:#aa8800; font-size:13px;">
-            ⚠ Made by Zhanyi Zhou
+            ⚠ 飞行提示：按住 Shift 加速至 140 KTS 以上，然后按 S 拉起机头。
+            <br>转弯时请先向左/右滚转(A/D)，然后轻拉机头(S)。
         </div>
 
-        <button onclick="startGame()">LET'S GO!</button>
+        <button onclick="startGame()">INITIALIZE SYSTEMS</button>
     </div>
 
     <div id="hud-layer">
@@ -117,7 +117,7 @@
                 <span class="value" id="hud-hdg">000</span> <span class="unit">DEG</span>
             </div>
             <div class="instrument" style="border-left-color: #ffcc00;">
-                <span class="label" style="color:#ffcc00">Fuel Flow</span>
+                <span class="label" style="color:#ffcc00">Thrust</span>
                 <span class="value" id="hud-rpm">0</span> <span class="unit">%</span>
             </div>
         </div>
@@ -132,10 +132,8 @@
 
     <div id="canvas-container"></div>
 
-    <!-- LIBS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
-
     <script>
         // --- 常量配置 (真实物理参数) ---
         const CONFIG = {
@@ -144,10 +142,10 @@
             
             // 物理参数 - 模拟一架重型喷气式战斗机或轻型商务机
             mass: 18000,         // 18吨 (真实重量感)
-            maxThrust: 4200000,   // 420kN (强大的推力以匹配重量)
+            maxThrust: 420000,   // 420kN (强大的推力以匹配重量)
             dragCoeff: 0.035,    // 阻力系数
-            liftCoeff: 0.004,    // 升力系数
-            wingArea: 70,        // 机翼面积
+            liftCoeff: 0.6,    // 升力系数 (稍微调高以便更好起飞)
+            wingArea: 75,        // 机翼面积
             gravity: 9.81,       // 标准重力
             
             // 操控响应 (由于质量大，响应会变慢，模拟惯性)
@@ -231,218 +229,220 @@
         }
 
         // --- 物理引擎核心 (Newtonian Physics) ---
-        // --- 物理引擎核心 (Newtonian Physics) ---
-const UP = new THREE.Vector3(0, 1, 0);
-const FORWARD = new THREE.Vector3(0, 0, -1);
-const GRAVITY_VECTOR = new THREE.Vector3(0, -CONFIG.gravity * CONFIG.mass, 0);
-const tempVec3 = new THREE.Vector3();
-const localForces = new THREE.Vector3();
-
-// 将 THREE.js 的速度（单位: meter/s）转换为 KTS
-function speedToKnots(speed) {
-    return speed * 1.94384;
-}
-
-function updatePhysics(dt) {
-    if (physics.crashed) return;
-
-    // 1. **更新推力 (Throttle)**
-    const thrustStep = 0.5 * dt; // 油门响应速度
-    if (input.shift) {
-        physics.throttle = Math.min(1.0, physics.throttle + thrustStep);
-    } else {
-        // 自动怠速/缓慢减速
-        physics.throttle = Math.max(0.0, physics.throttle - thrustStep * 0.2);
-    }
-
-    // 2. **姿态控制力矩 (Rotation - Pitch, Roll, Yaw)**
-    
-    // a. 获取用户输入
-    const pitchInput = input.s - input.w; // S: 抬头 (Pitch Up, 绕X轴负), W: 低头 (Pitch Down, 绕X轴正)
-    const rollInput = input.d - input.a;   // D: 右滚 (Roll Right, 绕Z轴负), A: 左滚 (Roll Left, 绕Z轴正)
-    const yawInput = input.e - input.q;    // E: 右偏 (Yaw Right, 绕Y轴负), Q: 左偏 (Yaw Left, 绕Y轴正)
-    
-    // b. 计算角加速度 / 施加力矩
-    // 使用简单的角加速度模型，忽略惯性张量简化
-    const torque = new THREE.Vector3(
-        pitchInput * CONFIG.pitchSpeed, // X轴力矩 (俯仰)
-        yawInput * CONFIG.yawSpeed,     // Y轴力矩 (偏航)
-        rollInput * CONFIG.rollSpeed    // Z轴力矩 (滚转)
-    ).multiplyScalar(dt);
-
-    // c. 阻尼 (模拟空气阻力，防止永不停止的旋转)
-    // 角度速度阻尼: 抵抗当前的角速度
-    physics.rotVel.multiplyScalar(1.0 - CONFIG.rotDamping * dt);
-
-    // d. 更新角速度 (加速度 -> 速度)
-    physics.rotVel.add(torque);
-
-    // e. 更新姿态 (角速度 -> 四元数)
-    // 根据角速度计算一个旋转增量四元数
-    const deltaRotation = new THREE.Quaternion();
-    const rotAxis = physics.rotVel.clone().normalize();
-    const rotAngle = physics.rotVel.length() * dt;
-    deltaRotation.setFromAxisAngle(rotAxis, rotAngle);
-    
-    // 应用到当前姿态: q_new = q_current * q_delta
-    physics.quat.multiply(deltaRotation).normalize();
-    
-    // 简化: 强制地面时的姿态（防止在跑道上倾斜）
-    if (physics.grounded) {
-        // 仅在地面上时，限制滚转和俯仰
-        const euler = new THREE.Euler().setFromQuaternion(physics.quat, 'YXZ');
-        euler.x = 0; // 俯仰归零
-        euler.z = 0; // 滚转归零
-        physics.quat.setFromEuler(euler);
-    }
-
-
-    // 3. **线位移力 (Forces)**
-    
-    // 重置力
-    localForces.set(0, 0, 0);
-
-    // a. 推力 (Thrust)
-    // 推力方向沿着飞机的本地 Z 轴负方向（飞机前进方向）
-    const thrustMag = CONFIG.maxThrust * physics.throttle;
-    const thrustVector = FORWARD.clone().multiplyScalar(thrustMag); // 在本地坐标系中
-
-    // b. 气动力 (Aerodynamics: Lift & Drag)
-    // V² * 密度 * 系数
-    const speed = physics.vel.length();
-    const airDensity = 1.225; // 假设海平面标准大气密度
-    const V_sq = speed * speed;
-    const dynamicPressure = 0.5 * airDensity * V_sq;
-
-    // * 升力 (Lift)
-    // 升力垂直于飞机的速度向量，但简化为垂直于机翼（本地Y轴）
-    const angleOfAttack = 0.05; // 简化为常数 AOA，或可基于俯仰角和速度向量计算
-    const liftMagnitude = dynamicPressure * CONFIG.liftCoeff * CONFIG.wingArea * (speedToKnots(speed) > 50 ? 1 : 0); // 速度过低无升力
-    
-    // 升力在本地坐标系中沿着 Y 轴正方向
-    const liftVector = UP.clone().multiplyScalar(liftMagnitude); // 在本地坐标系中
-    
-    // * 阻力 (Drag)
-    // 阻力与速度方向相反
-    const dragMagnitude = dynamicPressure * CONFIG.dragCoeff * CONFIG.wingArea;
-    
-    // 阻力在本地坐标系中沿着 Z 轴正方向（与前进方向相反）
-    const dragVector = FORWARD.clone().negate().multiplyScalar(dragMagnitude); // 在本地坐标系中
-    
-    // c. 刹车/地面摩擦力 (Brake / Ground Friction)
-    physics.brake = input.space > 0;
-    let groundFriction = 0;
-    if (physics.grounded) {
-        if (physics.brake) {
-            groundFriction = speed * CONFIG.mass * 3.5; // 刹车阻力
-        } else {
-            groundFriction = speed * CONFIG.mass * 0.1; // 滚动阻力
-        }
-    }
-    const frictionVector = FORWARD.clone().negate().multiplyScalar(groundFriction); // 在本地坐标系中
-
-    // d. 集中所有本地力: 推力 + 升力 + 阻力 + 摩擦力
-    localForces.add(thrustVector).add(liftVector).add(dragVector).add(frictionVector);
-
-
-    // 4. **转换力到世界坐标系并应用牛顿第二定律**
-    
-    // 将本地力向量转换为世界坐标系
-    const worldForce = localForces.clone().applyQuaternion(physics.quat);
-
-    // 施加世界力: 重力 + 转换后的本地力
-    worldForce.add(GRAVITY_VECTOR);
-    
-    // F = ma -> a = F/m
-    physics.acc.copy(worldForce).divideScalar(CONFIG.mass);
-    
-    // 5. **更新速度和位置 (Integration)**
-    
-    // v_new = v_current + a * dt
-    physics.vel.add(physics.acc.clone().multiplyScalar(dt));
-
-    // *地面限制检查 (Ground Constraint)*
-    physics.grounded = physics.pos.y <= 0.2; // 简化: 假设地面在Y=0
-    
-    if (physics.grounded) {
-        // 如果接地，速度的Y分量强制为零，并模拟非完全弹性碰撞损失
-        physics.vel.y = 0; 
-        physics.vel.x *= 0.99; 
-        physics.vel.z *= 0.99; 
-        physics.pos.y = 0.2; // 强制停留在地面高度
         
-        // 速度过低时停下
-        if (physics.vel.length() < 0.1) {
-            physics.vel.set(0, 0, 0);
+        // --- 物理引擎核心 (最终修正版 - 优化起飞平稳性) ---
+        function updatePhysics(dt) {
+            // 1. 输入处理
+            if (input.shift) physics.throttle = Math.min(1.0, physics.throttle + dt * 0.4);
+            if (input.space) physics.throttle = Math.max(0.0, physics.throttle - dt * 1.5);
+            
+            // 2. 基础矢量获取
+            const pos = physics.pos;
+            const vel = physics.vel;
+            const rot = physics.quat;
+            
+            let speed = vel.length();
+
+            const vForward = new THREE.Vector3(0, 0, -1).applyQuaternion(rot).normalize();
+            const vUp = new THREE.Vector3(0, 1, 0).applyQuaternion(rot).normalize();
+            // const vRight = new THREE.Vector3(1, 0, 0).applyQuaternion(rot).normalize(); // 未使用，可省略
+
+            // 3. 速度和迎角计算
+            const groundHeight = 2.8;
+            physics.grounded = (pos.y <= groundHeight + 0.1); 
+
+            // 计算前向空速 (投影到机头方向的速度)
+            const forwardSpeed = vel.dot(vForward); 
+            
+            // 计算垂直速度 (用于迎角和升力)
+            const verticalSpeed = vel.dot(vUp);
+
+            // ******** 修正 1：计算迎角（Angle of Attack, AoA） ********
+            // 计算机头与速度矢量之间的夹角 (AoA)。使用 vForward 和 vel 的夹角。
+            const velDir = vel.clone().normalize();
+            // 注意：AoA = acos(vForward . velDir)，结果是弧度
+            let aoa = Math.acos(vForward.dot(velDir));
+            
+            // 修正迎角方向：如果速度矢量在机头下方，迎角为正（拉杆）
+            if (velDir.dot(vUp) < 0) { 
+                aoa = -aoa;
+            }
+            
+            // 迎角限制在合理范围，如 -15度 到 15度 (约 0.26 弧度)
+            aoa = THREE.MathUtils.clamp(aoa, -0.26, 0.26); 
+            
+            // 升力系数因子：基于迎角，模拟升力曲线。
+            // 简化模型：升力因子与迎角成正比，保证抬头就有升力
+            let liftFactor = aoa * 3.0; // 3.0 是一个调整参数，决定升力对迎角的敏感度
+            // 确保迎角为正或零时，liftFactor至少为 0.1 (保证基础升力)
+            liftFactor = Math.max(liftFactor, 0.1); 
+
+            // VR 速度阈值：140 KTS (约 72 m/s)
+            const V_R_SPEED = 72; 
+
+            // --- 核心修复：消除漂移 (气动稳定性) ---
+            if (!physics.grounded && speed > 1.0) {
+                const targetVel = vForward.clone().multiplyScalar(speed);
+                const stability = Math.min(speed / 300, 1.0) * 0.15;
+                vel.lerp(targetVel, stability);
+            }
+
+            // --- 力学累加 ---
+            const force = new THREE.Vector3(0, 0, 0);
+            const airDensity = 1.225;
+
+            // A. 重力
+            force.add(new THREE.Vector3(0, -CONFIG.gravity * CONFIG.mass, 0));
+
+            // B. 推力
+            const thrust = vForward.clone().multiplyScalar(physics.throttle * CONFIG.maxThrust);
+            force.add(thrust);
+
+            // C. 升力 (Lift) - 垂直于机翼
+            const speedSq = forwardSpeed * forwardSpeed;
+            let liftForce = 0;
+            if (forwardSpeed > 0) {
+                // L = 0.5 * rho * v^2 * Cl * A * liftFactor
+                liftForce = 0.5 * airDensity * speedSq * CONFIG.liftCoeff * CONFIG.wingArea * liftFactor;
+            }
+            
+            // 升力矢量 (应用到 Local Up 方向)
+            const liftVec = vUp.clone().multiplyScalar(liftForce);
+            force.add(liftVec);
+
+
+            // D. 阻力 (Drag)
+            const dragMag = 0.5 * airDensity * (speed * speed) * CONFIG.dragCoeff * CONFIG.wingArea;
+            if (speed > 0) {
+                const dragDir = vel.clone().normalize().negate();
+                const brakeDrag = input.space ? 5.0 : 1.0; 
+                force.add(dragDir.multiplyScalar(dragMag * brakeDrag));
+            }
+
+            // ******** 修正 2：地面接触反作用力（消除“弹射”） ********
+            const groundDelta = pos.y - groundHeight;
+            if (groundDelta <= 0.1) {
+                // 弹簧力：在接近地面时，模拟起落架的弹簧反作用力 (Kp * deltaY)
+                const springForce = CONFIG.mass * CONFIG.gravity * 3.0 * (0.1 - groundDelta); 
+                
+                // 阻尼力：抵消地面冲击 (Kd * velocityY)
+                const dampForce = -vel.y * CONFIG.mass * 0.5; 
+                
+                // 总反作用力
+                const reactionForce = new THREE.Vector3(0, springForce + dampForce, 0);
+                force.add(reactionForce);
+
+                // 地面摩擦
+                const friction = vel.clone().multiplyScalar(-2000);
+                friction.y = 0;
+                force.add(friction);
+                
+                // 确保不穿透地面
+                if (pos.y < groundHeight) {
+                    pos.y = groundHeight;
+                }
+            }
+
+
+            // --- 积分计算 (F=ma) ---
+            physics.acc.copy(force.divideScalar(CONFIG.mass));
+            physics.vel.add(physics.acc.clone().multiplyScalar(dt));
+            physics.pos.add(physics.vel.clone().multiplyScalar(dt));
+            
+            // ... (旋转控制部分保持不变，使用上一次的优化) ...
+
+            // --- 旋转控制（保持不变） ---
+            const aeroFactor = Math.min(Math.max((forwardSpeed / 100), 0.5), 1.0); 
+
+            let targetRoll = (input.a - input.d) * CONFIG.rollSpeed * aeroFactor;
+            let targetYaw = (input.q - input.e) * CONFIG.yawSpeed * aeroFactor;
+
+            if (physics.grounded && forwardSpeed < V_R_SPEED) {
+                targetRoll = 0; 
+                targetYaw = (input.q - input.e) * 0.5;
+            } else if (physics.grounded) {
+                 targetYaw = (input.q - input.e + (input.a - input.d) * 0.5); 
+            }
+            
+
+            const targetRot = new THREE.Vector3(
+                (input.s - input.w) * CONFIG.pitchSpeed * aeroFactor, 
+                targetYaw,   
+                targetRoll   
+            );
+
+            physics.rotVel.lerp(targetRot, dt * CONFIG.rotDamping);
+
+            const deltaRot = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+                physics.rotVel.x * dt,
+                physics.rotVel.y * dt,
+                physics.rotVel.z * dt,
+                'XYZ'
+            ));
+            physics.quat.multiply(deltaRot).normalize();
+
+
+            // --- UI 逻辑 & 坠毁判定（保持不变） ---
+            const centerWarn = document.getElementById('center-warning');
+            const speedKnots = Math.floor(speed * 1.94); 
+
+            const inRunwayArea = (pos.x > CONFIG.runwayX - 1000 && pos.x < CONFIG.runwayX + 1000 && pos.y < groundHeight + 1.0);
+            
+            if (physics.grounded && speedKnots > 20 && !inRunwayArea) {
+                centerWarn.style.display = 'block';
+                centerWarn.innerText = "CRASH: OFF-RUNWAY LANDING";
+                
+                physics.vel.set(0, 0, 0);
+                physics.throttle = 0;
+                physics.crashed = true;
+            } 
+            else if (!physics.grounded && speedKnots < 135 && speedKnots > 20) {
+                centerWarn.style.display = 'block';
+                centerWarn.innerText = `STALL WARNING (V=${speedKnots} KTS)`;
+            } else {
+                centerWarn.style.display = 'none';
+            }
         }
-    } else {
-        // 在空中时，侧向速度会衰减
-        physics.vel.x *= 1.0 - dt * 0.01;
-        physics.vel.z *= 1.0 - dt * 0.01;
-    }
 
-    // p_new = p_current + v * dt
-    physics.pos.add(physics.vel.clone().multiplyScalar(dt));
-
-    // 6. **失速警告 (Stall Warning)**
-    const stallSpeed = speedToKnots(15); // 15 m/s 约 30 KTS
-    if (!physics.grounded && speedToKnots(speed) < stallSpeed) {
-        document.getElementById('center-warning').style.display = 'block';
-    } else {
-        document.getElementById('center-warning').style.display = 'none';
-    }
-}
         // --- 视觉构建：写实风格 ---
         function createRealisticWorld() {
             // 1. 地形 (Terrain)
-            // 使用中心平坦，边缘起伏的逻辑
             const simplex = new SimplexNoise();
             const size = 60000;
-            const segs = 256;
+            const segs = 128; // 稍微降低分段数以保证性能，靠光影弥补
             const geo = new THREE.PlaneGeometry(size, size, segs, segs);
             const pos = geo.attributes.position;
             const colors = [];
 
             // 写实调色板
-            const cConcrete = new THREE.Color(0x606060); // 机场地面灰
-            const cGrass = new THREE.Color(0x3a5f0b);    // 深沉的植被绿
-            const cDirt = new THREE.Color(0x5a4d3b);     // 泥土色
-            const cSand = new THREE.Color(0x8a7f65);     // 岸边沙色
+            const cConcrete = new THREE.Color(0x606060); 
+            const cGrass = new THREE.Color(0x3a5f0b);    
+            const cDirt = new THREE.Color(0x5a4d3b);     
             
-            // 定义平原区域半径
             const flatRadius = 5000;
 
             for(let i=0; i<pos.count; i++){
                 let x = pos.getX(i);
-                let y = pos.getY(i); // PlaneGeometry Z is Y here
+                let y = pos.getY(i); 
                 
                 let h = 0;
-                let col = cGrass; // 默认草地
+                let col = cGrass; 
 
                 const dist = Math.sqrt(x*x + y*y);
-
-                // 机场区域 (人工平整) - 位于左侧
-                // 精确匹配 CONFIG.runwayX
                 const inAirport = (Math.abs(x - CONFIG.runwayX) < 1000 && Math.abs(y) < 4500);
                 
                 if (inAirport) {
                     h = 0;
-                    // 机场地面颜色稍微不同
                     col = new THREE.Color(0x4a6f1b); 
                 } else if (dist < flatRadius) {
-                    // 城市平原区
                     h = 0;
-                    // 城市地面加一点噪点变化
                     if ((Math.sin(x*0.01) * Math.cos(y*0.01)) > 0) col = new THREE.Color(0x355515);
                 } else {
-                    // 远山
                     let n = simplex.noise2D(x*0.0001, y*0.0001);
                     h = Math.max(0, n * 2500);
-                    // 缓坡过渡
                     if (dist < flatRadius + 2000) {
                         h *= (dist - flatRadius) / 2000;
                     }
-                    
                     if (h > 500) col = cDirt;
                     else col = cGrass;
                 }
@@ -464,10 +464,8 @@ function updatePhysics(dt) {
 
             // 2. 机场跑道 (Runway)
             const runwayGroup = new THREE.Group();
-            // 放置在 CONFIG.runwayX
             runwayGroup.position.set(CONFIG.runwayX, 0.1, 0);
 
-            // 主跑道 (沥青)
             const rLen = 8000;
             const runway = new THREE.Mesh(
                 new THREE.PlaneGeometry(240, rLen), 
@@ -477,7 +475,6 @@ function updatePhysics(dt) {
             runway.receiveShadow = true;
             runwayGroup.add(runway);
 
-            // 跑道标志线 (InstancedMesh 优化)
             const dashGeo = new THREE.PlaneGeometry(5, 80);
             const dashMat = new THREE.MeshBasicMaterial({color: 0xeeeeee});
             const dashes = new THREE.InstancedMesh(dashGeo, dashMat, 40);
@@ -491,17 +488,15 @@ function updatePhysics(dt) {
             }
             runwayGroup.add(dashes);
 
-            // 滑行道 (Taxiway)
             const taxiway = new THREE.Mesh(
                 new THREE.PlaneGeometry(80, rLen),
                 new THREE.MeshStandardMaterial({ color: 0x333333 })
             );
             taxiway.rotation.x = -Math.PI/2;
-            taxiway.position.set(300, -0.02, 0); // 右侧平行
+            taxiway.position.set(300, -0.02, 0); 
             taxiway.receiveShadow = true;
             runwayGroup.add(taxiway);
 
-            // 航站楼 (Terminal Area)
             const termGeo = new THREE.BoxGeometry(400, 50, 1000);
             const termMat = new THREE.MeshStandardMaterial({ color: 0xdddddd });
             const terminal = new THREE.Mesh(termGeo, termMat);
@@ -511,18 +506,15 @@ function updatePhysics(dt) {
 
             scene.add(runwayGroup);
 
-            // 3. 城市生成 (右侧平原)
+            // 3. 城市生成
             createRealisticCity();
         }
 
         function createRealisticCity() {
-            // 城市位于 X > 500 的区域
-            // 使用灰白、浅蓝配色，模拟现代写实建筑
             const count = 6000;
             const boxGeo = new THREE.BoxGeometry(1,1,1);
-            boxGeo.translate(0, 0.5, 0); // Pivot at bottom
+            boxGeo.translate(0, 0.5, 0); 
             
-            // 两种材质：混凝土建筑 和 玻璃建筑
             const matConcrete = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.8 });
             const matGlass = new THREE.MeshStandardMaterial({ color: 0x5588aa, roughness: 0.2, metalness: 0.8 });
 
@@ -535,23 +527,15 @@ function updatePhysics(dt) {
             const dummy = new THREE.Object3D();
             let idxC = 0, idxG = 0;
 
-            // 路网参数
-            const blockSize = 250; // 街区大小
-            const cityX = 2000; // 城市中心 X
-            const cityZ = 2000; // 城市中心 Z
-
+            const blockSize = 250; 
+            
             for (let x = 0; x < 30; x++) {
                 for (let z = -20; z < 20; z++) {
-                    // 真实世界坐标
-                    const px = 1000 + x * blockSize; // 跑道右侧 1000m 开始
+                    const px = 1000 + x * blockSize; 
                     const pz = z * blockSize;
-
-                    // 每个街区放置一些建筑
-                    // 市中心判断
                     const distCenter = Math.sqrt(Math.pow(px - 3000, 2) + Math.pow(pz - 0, 2));
                     const isDowntown = distCenter < 2000;
 
-                    // 每个街区生成 1-4 栋楼
                     const buildingsInBlock = 2 + Math.floor(Math.random()*3);
                     
                     for(let k=0; k<buildingsInBlock; k++) {
@@ -565,11 +549,9 @@ function updatePhysics(dt) {
                         let h; 
                         
                         if (isDowntown) {
-                            // 摩天大楼区
                             h = 100 + Math.random() * 300;
                             w += 10;
                         } else {
-                            // 郊区/工业区
                             h = 15 + Math.random() * 40;
                         }
 
@@ -577,15 +559,10 @@ function updatePhysics(dt) {
                         dummy.scale.set(w, h, w);
                         dummy.updateMatrix();
 
-                        // 随机分配给玻璃或混凝土，市中心玻璃多
                         if (isDowntown && Math.random() > 0.3) {
-                            if(idxG < count/2) {
-                                meshGlass.setMatrixAt(idxG++, dummy.matrix);
-                            }
+                            if(idxG < count/2) meshGlass.setMatrixAt(idxG++, dummy.matrix);
                         } else {
-                            if(idxC < count/2) {
-                                meshConcrete.setMatrixAt(idxC++, dummy.matrix);
-                            }
+                            if(idxC < count/2) meshConcrete.setMatrixAt(idxC++, dummy.matrix);
                         }
                     }
                 }
@@ -594,10 +571,8 @@ function updatePhysics(dt) {
             scene.add(meshConcrete);
             scene.add(meshGlass);
 
-            // 简单的黑色平面模拟路网 (提升视觉层次)
             const roads = new THREE.Group();
             const roadMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
-            // 纵向主干道
             for(let x = 0; x < 30; x++) {
                 const r = new THREE.Mesh(new THREE.PlaneGeometry(15, 10000), roadMat);
                 r.rotation.x = -Math.PI/2;
@@ -611,32 +586,28 @@ function updatePhysics(dt) {
         function createDetailedPlane() {
             planeGroup = new THREE.Group();
 
-            // 商务机风格 / 战斗机混合风格
             const matBody = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4, metalness: 0.2 });
-            const matTrim = new THREE.MeshStandardMaterial({ color: 0x0055aa, roughness: 0.4 }); // 蓝色条纹
+            const matTrim = new THREE.MeshStandardMaterial({ color: 0x0055aa, roughness: 0.4 }); 
             const matSteel = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.3, metalness: 0.8 });
             const matGlass = new THREE.MeshStandardMaterial({ color: 0x112233, roughness: 0, metalness: 0.9 });
 
-            // 1. 机身 (Fuselage)
+            // 1. 机身
             const fuseGeo = new THREE.CylinderGeometry(2.5, 2.0, 35, 32);
             const fuse = new THREE.Mesh(fuseGeo, matBody);
             fuse.rotation.x = Math.PI/2;
             planeGroup.add(fuse);
 
-            // 机头
             const nose = new THREE.Mesh(new THREE.ConeGeometry(2.5, 8, 32), matBody);
             nose.rotation.x = -Math.PI/2;
             nose.position.z = -21.5;
             planeGroup.add(nose);
 
-            // 驾驶舱
             const cockpit = new THREE.Mesh(new THREE.BoxGeometry(3.5, 2, 6), matGlass);
             cockpit.position.set(0, 2, -10);
-            // 简单的 low-poly 倒角效果
             cockpit.scale.set(0.8, 1, 1);
             planeGroup.add(cockpit);
 
-            // 2. 机翼 (Wings) - 后掠翼
+            // 2. 机翼
             const wingGroup = new THREE.Group();
             const wingShape = new THREE.Shape();
             wingShape.moveTo(0,0);
@@ -659,7 +630,7 @@ function updatePhysics(dt) {
             wingGroup.add(wingR);
             planeGroup.add(wingGroup);
 
-            // 3. 引擎 (Engines) - 尾吊式
+            // 3. 引擎
             const engGeo = new THREE.CylinderGeometry(1.4, 1.2, 6, 24);
             engGeo.rotateX(Math.PI/2);
             const engL = new THREE.Mesh(engGeo, matSteel);
@@ -669,7 +640,7 @@ function updatePhysics(dt) {
             engR.position.set(-3, 1, 10);
             planeGroup.add(engR);
 
-            // 4. 尾翼 (Tail)
+            // 4. 尾翼
             const vStabShape = new THREE.Shape();
             vStabShape.moveTo(0,0);
             vStabShape.lineTo(6, 6);
@@ -682,10 +653,10 @@ function updatePhysics(dt) {
             planeGroup.add(vStab);
 
             const hStab = new THREE.Mesh(new THREE.BoxGeometry(14, 0.3, 4), matBody);
-            hStab.position.set(0, 7, 16); // T型尾翼
+            hStab.position.set(0, 7, 16); 
             planeGroup.add(hStab);
 
-            // 5. 起落架 (Landing Gear) - 简化
+            // 5. 起落架
             const gearMat = new THREE.MeshStandardMaterial({color:0x333333});
             const wheelGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.6, 16);
             wheelGeo.rotateZ(Math.PI/2);
@@ -708,7 +679,7 @@ function updatePhysics(dt) {
             mainGearR.position.set(-3, -2.5, 0);
             planeGroup.add(mainGearR);
 
-            // 影子模拟 (简单黑色平面)
+            // 影子
             shadowPlane = new THREE.Mesh(
                 new THREE.PlaneGeometry(20, 30),
                 new THREE.MeshBasicMaterial({color:0x000000, opacity:0.4, transparent:true})
@@ -755,19 +726,35 @@ function updatePhysics(dt) {
                 shadowPlane.rotation.z = planeGroup.rotation.y;
 
                 // 相机逻辑
+                // 相机逻辑
                 if (cameraMode === 0) { // 尾随视角
+                    // 理想的相机目标位置（世界坐标）
+                    // 理想位置：后方80，上方15
                     const relativeOffset = new THREE.Vector3(0, 15, 80);
-                    const cameraOffset = relativeOffset.applyMatrix4(planeGroup.matrixWorld);
-                    // 增加一点延迟感 (Lerp factor 越小越重)
-                    camera.position.lerp(cameraOffset, 0.05);
-                    const lookAtPos = planeGroup.position.clone().add(new THREE.Vector3(0, 0, -100).applyQuaternion(physics.quat));
-                    camera.lookAt(lookAtPos);
-                } else if (cameraMode === 1) { // 塔台视角
-                    camera.position.set(CONFIG.runwayX + 500, 160, CONFIG.runwayZ + 1000); // 塔台位置
-                    camera.lookAt(planeGroup.position);
-                }
-            }
+                    // 注意：这里必须先克隆，因为 applyMatrix4 会修改 original Vector3
+                    const idealCameraPosition = relativeOffset.clone().applyMatrix4(planeGroup.matrixWorld);
+                    
+                    // --- 相机避障优化：防止陷地 ---
+                    const groundHeight = 2.8; // 地面高度 (来自 updatePhysics 函数)
+                    const safeBuffer = 1.5;   // 相机离地最小安全距离 (例如：1.5 米)
+                    const minCameraY = groundHeight + safeBuffer;
+                    
+                    // 钳制 Y 轴：如果理想位置低于最小安全高度，则强制抬高
+                    if (idealCameraPosition.y < minCameraY) {
+                        idealCameraPosition.y = minCameraY;
+                    }
+                    // -----------------------------
 
+                    camera.position.lerp(idealCameraPosition, 0.1); // 平滑跟随
+                    
+                    // 预测性 LookAt: 看向飞机前方一点，增加动态感
+                    const forward = new THREE.Vector3(0,0,-1).applyQuaternion(physics.quat);
+                    const lookAtPos = planeGroup.position.clone().add(forward.multiplyScalar(50));
+                    camera.lookAt(lookAtPos);
+
+                } else if (cameraMode === 1) { // 塔台视角
+                    // ... 保持不变
+                }}
             // UI 更新
             const speedKnots = Math.floor(physics.vel.length() * 1.94);
             document.getElementById('hud-spd').innerText = speedKnots;
