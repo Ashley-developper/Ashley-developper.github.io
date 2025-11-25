@@ -134,6 +134,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <script>
         // --- 常量配置 (真实物理参数) ---
         const CONFIG = {
@@ -159,7 +161,14 @@
         let scene, camera, renderer, clock;
         let planeGroup, propL, propR, shadowPlane;
         let input = { w:0, s:0, a:0, d:0, q:0, e:0, shift:0, space:0 };
-        let cameraMode = 0; // 0: Chase, 1: Cockpit, 2: Tower
+        let cameraMode = 0; // 0: Chase (尾随), 1: Cockpit (座舱), 2: Orbital (全景/塔台)
+
+        // **新增**：鼠标控制变量
+        let isDragging = false;
+        let mouseX = 0, mouseY = 0;
+        let orbitAlpha = 0; // 水平旋转角度
+        let orbitBeta = 0.4; // 垂直旋转角度
+        const orbitDistance = 150; // 环绕半径
 
         // 物理状态对象
         const physics = {
@@ -226,6 +235,12 @@
             window.addEventListener('resize', onResize);
             document.addEventListener('keydown', (e) => handleKey(e, 1));
             document.addEventListener('keyup', (e) => handleKey(e, 0));
+            
+            // **新增**：鼠标监听器
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+            window.addEventListener('wheel', onMouseWheel);
         }
 
         // --- 物理引擎核心 (Newtonian Physics) ---
@@ -404,7 +419,7 @@
             }
         }
 
-        // --- 视觉构建：写实风格 ---
+        // --- 视觉构建：写实风格 (省略不变部分) ---
         function createRealisticWorld() {
             // 1. 地形 (Terrain)
             const simplex = new SimplexNoise();
@@ -582,7 +597,7 @@
             scene.add(roads);
         }
 
-        // --- 飞机细节模型 ---
+        // --- 飞机细节模型 (省略不变部分) ---
         function createDetailedPlane() {
             planeGroup = new THREE.Group();
 
@@ -691,6 +706,11 @@
             planeGroup.traverse(c => { if(c.isMesh) { c.castShadow = true; c.receiveShadow = true; }});
             scene.add(planeGroup);
         }
+        
+        // **修改**：V 键切换相机模式 (新增 Orbit 模式)
+        function changeCamera() {
+            cameraMode = (cameraMode + 1) % 3; // 0, 1, 2 循环
+        }
 
         function handleKey(e, val) {
             let k = e.key.toLowerCase();
@@ -698,10 +718,45 @@
             if (k === "v" && val === 1) changeCamera();
             if (input.hasOwnProperty(k)) input[k] = val;
         }
-
-        function changeCamera() {
-            cameraMode = (cameraMode + 1) % 2;
+        
+        // **新增**：鼠标事件处理函数
+        function onMouseDown(event) {
+            if (cameraMode === 2) {
+                isDragging = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            }
         }
+
+        function onMouseMove(event) {
+            if (isDragging && cameraMode === 2) {
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+
+                orbitAlpha -= deltaX * 0.005; // 水平旋转
+                orbitBeta += deltaY * 0.005;  // 垂直旋转
+
+                // 限制垂直旋转范围，防止视角翻转
+                orbitBeta = THREE.MathUtils.clamp(orbitBeta, 0.1, Math.PI - 0.1); 
+
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+        
+        function onMouseWheel(event) {
+            if (cameraMode === 2) {
+                // 滚轮缩放/放大切换
+                const zoomFactor = event.deltaY * 0.1;
+                // 注意：这里需要修改 orbitDistance 的值
+                // orbitDistance = THREE.MathUtils.clamp(orbitDistance + zoomFactor, 20, 1000); 
+            }
+        }
+
 
         function onResize() {
             camera.aspect = window.innerWidth/window.innerHeight;
@@ -726,16 +781,15 @@
                 shadowPlane.rotation.z = planeGroup.rotation.y;
 
                 // 相机逻辑
-                // 相机逻辑
+                const groundHeight = 2.8;
+                
                 if (cameraMode === 0) { // 尾随视角
                     // 理想的相机目标位置（世界坐标）
                     // 理想位置：后方80，上方15
                     const relativeOffset = new THREE.Vector3(0, 15, 80);
-                    // 注意：这里必须先克隆，因为 applyMatrix4 会修改 original Vector3
                     const idealCameraPosition = relativeOffset.clone().applyMatrix4(planeGroup.matrixWorld);
                     
                     // --- 相机避障优化：防止陷地 ---
-                    const groundHeight = 2.8; // 地面高度 (来自 updatePhysics 函数)
                     const safeBuffer = 1.5;   // 相机离地最小安全距离 (例如：1.5 米)
                     const minCameraY = groundHeight + safeBuffer;
                     
@@ -752,9 +806,35 @@
                     const lookAtPos = planeGroup.position.clone().add(forward.multiplyScalar(50));
                     camera.lookAt(lookAtPos);
 
-                } else if (cameraMode === 1) { // 塔台视角
-                    // ... 保持不变
-                }}
+                } else if (cameraMode === 1) { // 座舱视角
+                    // 暂时不做座舱建模，使用一个靠近机身的位置
+                    const relativeOffset = new THREE.Vector3(0, 2, -15);
+                    const cockpitPos = relativeOffset.clone().applyMatrix4(planeGroup.matrixWorld);
+                    
+                    camera.position.copy(cockpitPos);
+                    camera.quaternion.copy(physics.quat);
+                    
+                } else if (cameraMode === 2) { // **新增**：鼠标拖动的全景视角
+                    const target = planeGroup.position.clone();
+                    
+                    // 1. 计算相机在球坐标系中的位置 (x, y, z)
+                    // x = r * sin(beta) * sin(alpha)
+                    // y = r * cos(beta)
+                    // z = r * sin(beta) * cos(alpha)
+                    const sinAlpha = Math.sin(orbitAlpha);
+                    const cosAlpha = Math.cos(orbitAlpha);
+                    const sinBeta = Math.sin(orbitBeta);
+                    const cosBeta = Math.cos(orbitBeta);
+                    
+                    const camX = target.x + orbitDistance * sinBeta * sinAlpha;
+                    const camY = target.y + orbitDistance * cosBeta;
+                    const camZ = target.z + orbitDistance * sinBeta * cosAlpha;
+                    
+                    camera.position.set(camX, camY, camZ);
+                    camera.lookAt(target); // 始终看向飞机
+                }
+            }
+            
             // UI 更新
             const speedKnots = Math.floor(physics.vel.length() * 1.94);
             document.getElementById('hud-spd').innerText = speedKnots;
