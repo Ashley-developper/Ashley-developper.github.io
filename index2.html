@@ -137,6 +137,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <script>
+        console.log('Welcome to my flight wsimulator);
         // --- 常量配置 (真实物理参数) ---
         const CONFIG = {
             runwayZ: 4000,       // 跑道起点Z坐标
@@ -414,6 +415,7 @@
             else if (!physics.grounded && speedKnots < 135 && speedKnots > 20) {
                 centerWarn.style.display = 'block';
                 centerWarn.innerText = `STALL WARNING (V=${speedKnots} KTS)`;
+                
             } else {
                 centerWarn.style.display = 'none';
             }
