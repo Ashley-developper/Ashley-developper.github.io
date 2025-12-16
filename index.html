@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-		<!-- Copyright © 2025 Zhanyi Zhou. All rights reserved. -->
-		<!-- Copyright © 2025 Ashley Studio (Zhanyi Zhou). All rights reserved. -->
-        <!-- This is official code for AOS4 -->
-        <meta charset="UTF-8">
-        <!-- META FOR GOOGLE CONSOLE -->
+		<meta charset="UTF-8">
         <meta name="description" content="Zhanyi Zhou, Personal Website">
         <meta name="keywords" content="Zhanyi Zhou, Interest, Personal website, Zhanyi">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +9,13 @@
         <title> AOS 4 developper BETA</title>
         <link rel="icon" href="https://i.ibb.co/DPCmRdtg/Ashley-light.png">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Anton">
-        <!-- NOT FIT FOR MOBILE USERS, FIXING-->
-            <style>
+        <style>
                 body{
                     background: white;
                     font-family: Garamond, serif;
-                    font-size: 25px;
+                    font-size: 25px; /* Base size */
+                    margin: 0; /* Remove default body margin */
+                    padding-top: 60px; /* Add padding for fixed navbar */
                 }
             
                 .Island {
@@ -27,12 +24,12 @@
                     position: fixed;
                     display: flex;
                     background-color: black;
-                    width: 170px;
-                    height: 40px;
+                    width: 140px; /* Adjusted for mobile */
+                    height: 35px; /* Adjusted for mobile */
                     left: 50%;
-                    top: 14px;
+                    top: 10px; /* Adjusted for mobile */
                     transform: translateX(-50%);
-                    border-radius: 20px 20px 20px 20px;
+                    border-radius: 18px; /* Adjusted for mobile */
                     cursor: pointer;
                     transition: all 0.3s ease;
                     justify-content: center;
@@ -42,12 +39,12 @@
                 .grow {
                     padding: 0px 10px;
                     min-width: 120px;
-                    width: 270px;
-                    height: 40px;
+                    width: 250px; /* Adjusted for mobile */
+                    height: 35px; /* Adjusted for mobile */
                 }
 
                 .Island2 {
-					z-index: 9999;
+					z-index: 9998; /* Below Island */
                     will-change: width, opacity, height;
                     position: fixed;
                     display: flex;
@@ -55,9 +52,9 @@
                     width: 0px;
                     height: 0px;
                     left: 50%;
-                    top: 60px;
+                    top: 55px; /* Adjusted for mobile */
                     transform: translateX(-50%);
-                    border-radius: 29px 29px 29px 29px;
+                    border-radius: 20px; /* Adjusted for mobile */
                     cursor: pointer;
                     transition: all 0.3s ease;
                     justify-content: center;
@@ -65,20 +62,22 @@
                 }
 
                 .grow2 {
-                    padding: 0px 10px;
-                    width: 500px;
-                    height: 40px;
+                    padding: 0px 5px;
+                    width: 90vw; /* Take most of the viewport width */
+                    height: auto; /* Allow content to dictate height */
+                    min-height: 40px;
                 }
             
                 .text {
                     position: absolute;
                     left: 50%;
                     transform: translateX(-50%);
-                    top: -20px;
+                    top: -15px; /* Adjusted for mobile */
                     display: flex;
                     color: white;
                     opacity: 1;
                     transition: all 1s ease;
+                    font-size: 16px; /* Adjusted for mobile */
                 }
 
                 .hidden {
@@ -102,36 +101,35 @@
                     justify-content: space-between;
                     right: 8px;
                     top: -4px;
-                    font-size: 30px;
+                    font-size: 25px; /* Adjusted for mobile */
                 }
             
                 .sections {
                     display: flex;
                     opacity: 1;
-                    justify-content: space-between;
+                    flex-direction: column; /* Key change: Stack links vertically */
+                    justify-content: center;
                     align-items: center;
+                    width: 100%;
                     transition: all 1s ease;
+                    padding: 10px 0;
                 }
 
                 .sections a{
-                    display: flex;
+                    display: block; /* Make links take full width */
                     overflow: hidden; 
                     height: auto;
                     opacity: 1;
                     color: white;
                     text-decoration: none;
                     transition: all 0.2s ease;
-                    padding: 10px;
+                    padding: 8px 10px; /* Adjusted for mobile */
+                    font-size: 18px;
                 }
 
                 .sections a:hover{
-                    display: flex;
-                    overflow: hidden; 
-                    opacity: 1;
-                    color: white;
                     text-decoration: underline;
-                    transition: all 1s ease;
-                    padding: 10px;
+                    transition: all 0.2s ease;
                 }
 
                 .sechid {
@@ -140,15 +138,22 @@
                     overflow: hidden; 
                     pointer-events: none;
                     transition: all 0.2s ease;
+                    max-height: 0; /* Control collapse */
+                    padding: 0;
+                }
+                
+                .Island2.grow2 .sechid {
+                    max-height: 300px; /* Max height for expansion */
                 }
 
                 .intro {
                     background-color: antiquewhite;
-                    position: absolute;
+                    position: relative; /* Changed from absolute */
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     width: 100%;
+                    padding-bottom: 20px; /* Add some space below intro */
                     top: 0;
                     left: 0px;
                     z-index: -1;
@@ -158,74 +163,82 @@
                 .titleA1 {
                     color:orange;
                     font-weight: bold;
-                    margin-top: 145px;
+                    margin-top: 60px; /* Adjusted for mobile */
+                    font-size: 35px;
                 }
 
                 .cotitA1 {
                     color: cornflowerblue;
                     font-weight: bold;
+                    font-size: 25px;
                 }
 
                 .img2 {
                     position: absolute;
-                    height: 60px;
-                    top: 65px;
+                    height: 50px; /* Adjusted for mobile */
+                    top: 10px; /* Adjusted for mobile */
                 }
 
-				.QA1 {
-					position: absolute;
-					top: 370px;
-					left: 20px;
-					right: 50%;
+				.QA1, .QA2, .QA3 {
+					position: relative; /* Key change: Use relative for flow */
+					margin: 20px auto; /* Center with margin */
+					padding: 15px;
+					width: 90%; /* Use percentage for width */
 					background-color: rgba(255, 243, 222, 0.8);
 					border-radius: 20px;
+					box-sizing: border-box; /* Include padding and border in element's total width and height */
 				}
 
-				#Q1 {
-					position: relative;
-					font-family: Impact, Charcoal, sans-serif;
-					font-size: 60px;
-					font-weight: 800;
-					letter-spacing: 2px;
-					margin-left: 10px;
-				}
-					
-				 #p1 {
-                    position: relative;
-					margin-left: 10px;
-					margin-right: 10px;
+                .QA1 {
+                    top: 0; /* Remove absolute top */
                 }
 
-				#img1 {
-					position: absolute;
-					top: 140px;
-					left: 110%;
-					border-radius: 20px;
-					height: 460px;
-					width: auto;
+				#Q1, #Q2 {
+					font-family: Impact, Charcoal, sans-serif;
+					font-size: 30px; /* Adjusted for mobile */
+					font-weight: 800;
+					letter-spacing: 1px;
+					margin-left: 0;
+                    margin-top: 5px;
+                    margin-bottom: 10px;
 				}
-				#img2 {
-					position: absolute;
-					top: 380px;
-					right: 0%;
-					width: 200px;
+					
+				 #p1, #p2, #p3 {
+                    font-size: 18px; /* Adjusted for mobile */
+					margin-left: 0;
+					margin-right: 0;
+                    text-align: left;
+                }
+
+				/* Mobile-specific image handling: Use flow and max-width */
+				#img1, #img2, #img3, #img4 {
+					position: relative; /* Key change: Use relative */
+					display: block; /* Stack images */
+					margin: 10px auto;
+					max-width: 100%; /* Ensure images don't exceed container width */
 					height: auto;
+					border-radius: 20px;
+					transform: none !important; /* Remove absolute transforms */
+					left: auto !important;
+					right: auto !important;
+					top: auto !important;
 				}
 
-				#img3 {
-					position: absolute;
-					top: 320px;
-					left: -100px;
-					width: 820px;
-					height: auto;
+                #img1 { max-height: 200px; }
+                #img4 { max-height: 300px; }
+                #img2, #img3 { display: none; } /* Hide complex/overlapping images on small screens */
+
+
+				#txt1, #txt2 {
+					position: relative;
+					text-align: center;
+					margin: 10px 0;
+                    left: auto !important;
+                    right: auto !important;
+                    top: auto !important;
+                    font-size: 20px;
 				}
-				
-				#txt1 {
-					position: absolute;
-					top: 520px;
-					right: 0%;
-					font-family: "Chalkduster", fantasy;
-				}
+                #txt2 { font-size: 35px; } /* Keep this title larger */
 
 				.msg {
                     will-change: width, opacity, height;
@@ -235,9 +248,9 @@
    				 	backdrop-filter: blur(5px);
     				border-radius: 16px;
     				border: 6px solid rgba(255, 255, 255, 0.2); 
-                    width: 230px;
-                    height: 120px;
-                    top: 14px;
+                    width: 200px; /* Adjusted for mobile */
+                    height: 100px; /* Adjusted for mobile */
+                    top: 10px;
 					left: -990px;
                     border-radius: 20px ;
                     transition: all 0.5s ease;
@@ -246,6 +259,9 @@
 					color: black;
 					opacity: 1;
 					z-index: 9999;
+                    font-size: 14px;
+                    text-align: center;
+                    padding: 5px;
 				}
 
 				.msg2 {
@@ -255,10 +271,11 @@
                     background: rgba(255, 255, 255, 0.3);
    				 	backdrop-filter: blur(9px);
     				border: 1px solid rgba(255, 255, 255, 0.2); 
-                    width: 290px;
-                    height: 90px;
-                    top: 14px;
-					left: 10px;
+                    width: 270px; /* Adjusted for mobile */
+                    height: 80px; /* Adjusted for mobile */
+                    top: 10px;
+					left: 50%;
+                    transform: translateX(-50%);
                     border-radius: 20px;
                     transition: all 0.7s ease;
                     justify-content: center;
@@ -274,196 +291,456 @@
 				}
 
 				.QA2 {
-					position: absolute;
-					top: 1000px;
-					left: 20px;
-					background-color: rgba(255, 243, 222, 0.8);
-					border-radius: 20px;
+					top: 0; /* Remove absolute top */
 				}
-
-				#Q2 {
-					position: relative;
-					font-family: Impact, Charcoal, sans-serif;
-					font-size: 60px;
-					font-weight: 800;
-					letter-spacing: 2px;
-					margin-left: 10px;
-				}
-					
-				 #p2 {
-                    position: relative;
-					margin-left: 10px;
-					margin-right: 10px;
-                }
-
-				#img4 {
-					position: absolute;
-					top: 70px;
-					width: 670px;
-					height: auto;
-					transform: translateX(-104%);
-					border-radius: 20px;
-				}
-
-				#txt2 {
-					position: absolute;
-					top: -90px;
-                    right: 950px;
-					font-size: 70px;
-					font-family: 'Didot', serif;
-				}
-
-				.endnav {
-					position: absolute;
-					display: flex;
-					flex-direction: row;
-					top: 2300px;
-					left: 0px;
-                    height: 300px;
-					right: 0px;
-					bottom: 0px;
-					background-color: rgb(242,242,245);
-				}
-
-				.endnav1 {
-					display: flex;
-					flex-direction: column;
-					font-family: "American Typewriter Light", "American Typewriter", serif;
-					font-size: 20px;
-					margin: 0px 7px;
-				}
-
-				.endnav1-1 {
-					color: rgb(23,23,23);
-                    font-size: 23px;
-				}
-				
-				.SM1 {
-					text-decoration: none;
-					color: rgb(64,64,65);
-					margin: 5px 0;
-					cursor: pointer;
-				}
-
-				.SM2 {
-					text-decoration: none;
-					color: rgb(173,173,175);
-					margin: 5px 0;
-					cursor: not-allowed;
-				}
-
-				.SM2:active{
-					color: rgb(173,173,175);
-				}
-
-				.endnav2 {
-					display: flex;
-					flex-direction: column;
-					font-family: "American Typewriter Light", "American Typewriter", serif;
-					font-size: 20px;
-                    margin: 0px 18px;
-				}
-				
-                .SM21 {
-                    text-decoration: none;
-					color: rgb(64,64,65);
-					margin: 5px 0;
-					cursor: pointer;
-                }
-
-                .endnav2-1 {
-                    color: rgb(23,23,23);
-                    font-size: 23px;
-                }
-
-                .endtext {
-                    position: absolute;
-                    bottom: 10px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    font-size: 20px;
-                    color: rgb(150,150,150);
-                }
 
                 .QA3 {
-                    position: absolute;
-					top: 1280px;
-					left: 20px;
-					left: 50%;
-					background-color: rgba(255, 243, 222, 0.8);
-					border-radius: 20px;
+                    top: 0; /* Remove absolute top */
+                    left: 50%;
+                    transform: translateX(-50%);
                 }
-
-                #p3 {
-                    position: relative;
-                    margin-left: 10px;
-					margin-right: 10px;
-                }
-                
-                .coupon {
-                    position: absolute;
-                    display: flex;               
-                    margin: 200px;
+				
+				.coupon {
+                    position: relative; /* Key change: Use relative */
+                    display: flex;
+                    flex-direction: column; /* Stack elements vertically */
+                    margin: 20px auto; /* Center with margin */
+                    padding: 15px;
                     border-radius: 20px;
-                    width: 1000px;
-                    height: 340px;
-                    top: 1610px;
+                    width: 90%;
+                    height: auto;
+                    top: auto;
                     background: linear-gradient(to top right, #baf1e3 , #ffdede);
                     justify-content: center;
+                    align-items: center;
+                    box-sizing: border-box;
                 }
 
-                #txt3 {
+                #txt3, #txt4 {
                     position: relative;
-                    margin: 10px;
+                    margin: 10px 0;
                     top: 0px;
                     font-family: bradley hand, cursive;
-                    font-size: 40px;
-                }
-
-                #txt4 {
-                    position: absolute;
-                    margin: 10px;
-                    top: 60px;
-                    font-family: bradley hand, cursive;
-                    font-size: 40px;
+                    font-size: 24px; /* Adjusted for mobile */
+                    text-align: center;
                 }
                 
                 .coupon2 {
-                    position:absolute;
-                    top:150px;
-                    left:240px;
+                    position:relative;
+                    top:0;
+                    left:0;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    width: 100%;
                 }
 
                 #coupon-1 {
-                    height: 55px;
-                    width: 485px;
-                    border-radius: 70px;
-                    font-size: 70px;
-                    padding: 20px;
-                    letter-spacing: 7px;
+                    height: 40px; /* Adjusted for mobile */
+                    width: 90%; /* Use percentage */
+                    max-width: 300px;
+                    border-radius: 35px; /* Adjusted for mobile */
+                    font-size: 20px; /* Adjusted for mobile */
+                    padding: 10px;
+                    letter-spacing: 3px;
                     background-color: rgb(232, 250, 239);
+                    box-sizing: border-box;
+                    text-align: center;
                 }
 
                 #boutton {
-                    height: 50px;
-                    width: 230px;
-                    margin-left: 140px;
-                    margin-top: 20px;
+                    height: 40px; /* Adjusted for mobile */
+                    width: 150px; /* Adjusted for mobile */
+                    margin-left: 0;
+                    margin-top: 15px;
                     background-color: rgb(25, 72, 70);
                     border-radius: 20px;
                     color: white;
                     cursor: pointer;
-
+                    font-size: 18px;
                 }
 
                 #boutton:active {
                     background-color: rgb(0, 72, 66);
                 }
+                
+                .endnav {
+					position: relative; /* Key change: Use relative for flow */
+					display: flex;
+					flex-direction: column; /* Key change: Stack footer sections vertically */
+					top: auto;
+					left: 0px;
+                    height: auto; /* Allow content to dictate height */
+					right: 0px;
+					bottom: 0px;
+					background-color: rgb(242,242,245);
+                    padding: 20px;
+				}
+
+				.endnav1, .endnav2 {
+					display: flex;
+					flex-direction: column;
+					font-family: "American Typewriter Light", "American Typewriter", serif;
+					font-size: 18px; /* Adjusted for mobile */
+					margin: 10px 0; /* Add vertical margin */
+                    text-align: center;
+				}
+
+				.endnav1-1, .endnav2-1 {
+					color: rgb(23,23,23);
+                    font-size: 20px; /* Adjusted for mobile */
+                    margin-bottom: 5px;
+				}
+				
+				.SM1, .SM2, .SM21 {
+					text-decoration: none;
+					color: rgb(64,64,65);
+					margin: 3px 0;
+					cursor: pointer;
+				}
+
+                .endnav2 {
+                    margin-top: 20px;
+                }
+
+                .endtext {
+                    position: relative; /* Key change: Use relative for flow */
+                    bottom: auto;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 14px; /* Adjusted for mobile */
+                    color: rgb(150,150,150);
+                    margin-top: 15px;
+                    text-align: center;
+                }
+
+                /* --- NEW MODAL STYLES START --- */
+                .modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    display: none; /* Hidden by default */
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000; /* Above everything else */
+                    opacity: 0;
+                    transition: opacity 0.3s ease-out;
+                }
+
+                .modal-overlay.active {
+                    display: flex;
+                    opacity: 1;
+                }
+
+                .modal-content {
+                    background: linear-gradient(135deg, #f0f8ff, #e6e6fa);
+                    padding: 30px;
+                    border-radius: 15px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                    max-width: 90vw;
+                    width: 400px;
+                    text-align: center;
+                    position: relative;
+                    transform: scale(0.7);
+                    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Springy effect */
+                }
+
+                .modal-overlay.active .modal-content {
+                    transform: scale(1);
+                }
+
+                .modal-close-btn {
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                    font-size: 30px;
+                    color: #333;
+                    cursor: pointer;
+                    transition: color 0.2s;
+                    line-height: 1;
+                }
+
+                .modal-close-btn:hover {
+                    color: #ff5722;
+                }
+
+                .modal-title {
+                    color: #2196f3;
+                    font-family: 'Anton', sans-serif;
+                    font-size: 28px;
+                    margin-bottom: 20px;
+                }
+
+                .game-links {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                    margin-bottom: 25px;
+                }
+
+                .game-link {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 15px;
+                    background-color: #ffffff;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                    text-decoration: none;
+                    color: #333;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+
+                .game-link:hover {
+                    background-color: #e3f2fd;
+                    border-color: #2196f3;
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+                }
+
+                .game-link strong {
+                    font-size: 18px;
+                    color: #2196f3;
+                    margin-bottom: 5px;
+                }
+
+                .game-link span {
+                    font-size: 12px;
+                    color: #666;
+                }
+
+                .modal-note {
+                    font-size: 14px;
+                    color: #999;
+                }
+                /* --- NEW MODAL STYLES END --- */
+
+
+                /* Media Query for larger screens (e.g., tablets/desktops) to keep original layout */
+                @media (min-width: 768px) {
+                    body {
+                        font-size: 25px;
+                        padding-top: 60px;
+                    }
+
+                    .Island {
+                        width: 170px;
+                        height: 40px;
+                        top: 14px;
+                        border-radius: 20px;
+                    }
+
+                    .grow {
+                        width: 270px;
+                        height: 40px;
+                    }
+
+                    .Island2 {
+                        top: 60px;
+                        width: 0px;
+                        height: 0px;
+                    }
+
+                    .grow2 {
+                        width: 500px;
+                        height: 40px;
+                    }
+                    
+                    .text {
+                        top: -20px;
+                        font-size: 25px;
+                    }
+
+                    .hamburger {
+                        font-size: 30px;
+                        right: 8px;
+                        top: -4px;
+                    }
+
+                    .sections {
+                        flex-direction: row; /* Horizontal on desktop */
+                        padding: 0;
+                    }
+                    
+                    .sections a {
+                        padding: 10px;
+                        font-size: 25px;
+                    }
+
+                    .sechid {
+                        position: static;
+                        opacity: 1;
+                        pointer-events: auto;
+                        overflow: visible;
+                        max-height: none;
+                        display: flex;
+                    }
+
+                    .intro {
+                        padding-bottom: 0;
+                    }
+
+                    .titleA1 {
+                        margin-top: 145px;
+                        font-size: 40px;
+                    }
+
+                    .cotitA1 {
+                        font-size: 30px;
+                    }
+                    
+                    .img2 {
+                        height: 60px;
+                        top: 65px;
+                    }
+
+                    .QA1 {
+                        position: absolute; /* Revert to absolute on desktop */
+                        top: 370px;
+                        left: 20px;
+                        right: 50%;
+                        width: auto;
+                        transform: none;
+                    }
+
+                    #Q1 { font-size: 60px; }
+                    #p1 { font-size: 25px; }
+
+                    #img1 {
+                        position: absolute;
+                        top: 140px;
+                        left: 110%;
+                        height: 460px;
+                        width: auto;
+                        max-width: none;
+                    }
+                    #img2 {
+                        position: absolute;
+                        top: 380px;
+                        right: 0%;
+                        width: 200px;
+                        display: block; /* Show complex images */
+                    }
+                    #img3 {
+                        position: absolute;
+                        top: 320px;
+                        left: -100px;
+                        width: 820px;
+                        display: block; /* Show complex images */
+                    }
+                    
+                    #txt1 {
+                        position: absolute;
+                        top: 520px;
+                        right: 0%;
+                        font-size: 25px;
+                    }
+
+                    .QA2 {
+                        position: absolute;
+                        top: 1000px;
+                        left: 20px;
+                        width: 48%;
+                    }
+                    #Q2 { font-size: 60px; }
+                    #p2 { font-size: 25px; }
+
+
+                    #img4 {
+                        position: absolute;
+                        top: 70px;
+                        width: 670px;
+                        max-width: none;
+                        transform: translateX(-104%);
+                    }
+
+                    #txt2 {
+                        position: absolute;
+                        top: -90px;
+                        right: 950px;
+                        font-size: 70px;
+                    }
+                    
+                    .QA3 {
+                        position: absolute;
+                        top: 1280px;
+                        left: 50%;
+                        width: 45%;
+                        transform: none;
+                    }
+                    #p3 { font-size: 25px; }
+                    
+                    .coupon {
+                        position: absolute;
+                        flex-direction: row;
+                        margin: 200px;
+                        width: 1000px;
+                        height: 340px;
+                        top: 1610px;
+                        padding: 0;
+                    }
+                    
+                    #txt3 { font-size: 40px; margin-top: 10px; }
+                    #txt4 { position: absolute; top: 60px; font-size: 40px; }
+
+                    .coupon2 {
+                        position:absolute;
+                        top:150px;
+                        left:240px;
+                        flex-direction: row;
+                        width: auto;
+                    }
+
+                    #coupon-1 {
+                        height: 55px;
+                        width: 485px;
+                        border-radius: 70px;
+                        font-size: 70px;
+                        padding: 20px;
+                        letter-spacing: 7px;
+                        max-width: none;
+                    }
+
+                    #boutton {
+                        height: 50px;
+                        width: 230px;
+                        margin-left: 140px;
+                        margin-top: 20px;
+                    }
+
+                    .endnav {
+                        position: absolute;
+                        flex-direction: row;
+                        top: 2300px;
+                        padding: 20px 0;
+                        height: 300px;
+                    }
+
+                    .endnav1, .endnav2 {
+                        font-size: 20px;
+                        margin: 0px 7px;
+                        text-align: left;
+                    }
+
+                    .endnav2 {
+                        margin: 0px 18px;
+                        margin-top: 0;
+                    }
+
+                    .endtext {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 50%;
+                        font-size: 20px;
+                        margin-top: 0;
+                    }
+                }
         </style> 
     </head>
-    <!-- BODY PART (NAVBAR)-->
     <body>
-        <!-- STILL SOME ISSUES NOT SOLVED YET-->
         <nav class="navbar">
             <div class="Island grow">
                 <p class="text hidden"></p>
@@ -484,6 +761,24 @@
 
 		<div class="msg"></div>
 		
+        <div id="gameModal" class="modal-overlay">
+            <div class="modal-content">
+                <span class="modal-close-btn">&times;</span>
+                <h2 class="modal-title">Try my web-based 3D games!</h2>
+                <div class="game-links">
+                    <a href="https://Ashley-developper.github.io/ASLFS" target="_blank" class="game-link">
+                        <strong>FLight simulator (飞行模拟器)</strong> 
+                        <span>Ashley-developper.github.io/ASLFS</span>
+                    </a>
+                    <a href="https://Ashley-developper.github.io/ASLFS/CS1" target="_blank" class="game-link">
+                        <strong>Car simulator (汽车模拟器)</strong> 
+                        <span>Ashley-developper.github.io/ASLFS/CS1</span>
+                    </a>
+                </div>
+                <p class="modal-note">Click anywhere outside to close. (点击外部任意位置关闭)</p>
+            </div>
+        </div>
+        
         <div class="intro">
             <img class="img2" src="HELLOAPPLE.png">
             <h1 class="titleA1">Zhanyi Zhou</h1>
@@ -541,9 +836,7 @@
 		</div>
 
 	
-		<!--All code was properly made by Zhanyi Zhou except firbase :)-->
-
-        <script type="module">
+		<script type="module">
             //firebase code
             import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
             import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
@@ -625,6 +918,44 @@
         </script>
 
         <script defer>
+            // --- NEW MODAL JAVASCRIPT START ---
+            const gameModal = document.getElementById('gameModal');
+            const modalContent = gameModal.querySelector('.modal-content');
+            const modalCloseBtn = gameModal.querySelector('.modal-close-btn');
+
+            function showGameModal() {
+                // Show modal overlay after a short delay for smoother initial load
+                setTimeout(() => {
+                    gameModal.style.display = 'flex';
+                    // Force a reflow before adding the active class for animation
+                    void gameModal.offsetWidth; 
+                    gameModal.classList.add('active');
+                }, 100);
+            }
+
+            function hideGameModal() {
+                gameModal.classList.remove('active');
+                // Hide display property after animation finishes (0.3s)
+                setTimeout(() => {
+                    gameModal.style.display = 'none';
+                }, 300);
+            }
+
+            // Show the modal when the page loads (using load event since all content is ready)
+            window.addEventListener("load", showGameModal);
+
+            // Close button click
+            modalCloseBtn.addEventListener('click', hideGameModal);
+
+            // Close when clicking outside the modal content (on the overlay)
+            gameModal.addEventListener('click', function(event) {
+                if (event.target === gameModal) {
+                    hideGameModal();
+                }
+            });
+            // --- NEW MODAL JAVASCRIPT END ---
+
+            
             //Javascript for the navbar island
             //Started June 16 17:48:07
             //PROUDLY MADE BY ME, ZHANYI ZHOU
